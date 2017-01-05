@@ -1,9 +1,11 @@
 	$(function(){
 		$(".tagname_other").change(function(){
-			if($('input:radio[name="articleTag.articleTagName"]:checked').attr("id") == "tagname_other"){
+			if($(this).attr("name")=="articleTag.articleTagName"){
+				$(".tagname_other").not($(this)).removeAttr('checked');
 				selectedOther();
 			}else{
 				$("#othertag").attr("type","hidden");
+				$("#tagname_other").removeAttr('checked');
 			}
 		});
 		//初始化提示信息

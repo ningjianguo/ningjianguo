@@ -17,7 +17,7 @@
 	$(function() {
 		$('#dg').datagrid({
 			url : "loadArticle",
-			pageSize : 5,//默认选择的分页是每页5行数据  
+			pageSize : 15,//默认选择的分页是每页5行数据  
 			pageList : [ 5, 10, 15, 20 ],//可以选择的分页集合  
 			nowrap : true,//设置为true，当数据长度超出列宽时将会自动截取  
 		});
