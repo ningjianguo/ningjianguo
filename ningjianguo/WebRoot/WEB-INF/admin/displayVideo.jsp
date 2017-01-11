@@ -73,20 +73,22 @@
 	/*视频播放*/
 	function video(videoId) {
 		var videoName;
+		var videoFileName;
 		$.ajax({
 			type:"post",
 			url:"getVideoName",
 			data:"videoId="+videoId,
 			success:function(data){
-				videoName = eval("("+data.videoName+")")[0][1];
 				videoId = eval("("+data.videoName+")")[0][0];
+				videoName = eval("("+data.videoName+")")[0][1];
+				videoFileName = eval("("+data.videoName+")")[0][2];
 				var fz_video = new createVideo("video", //容器的id
 				{
 					url : null, //视频地址
 					autoplay : true
 				//是否自动播放
 				});
-				fz_video.setUrl(getRootPath() + "/file/" + videoName + "_blog_"+videoId+".mp4");
+				fz_video.setUrl(getRootPath() + "/file/" + videoFileName +".mp4");
 				$("#videoTitle").text(videoName);
 			}
 		})

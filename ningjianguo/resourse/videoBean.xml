@@ -5,6 +5,7 @@
 		<!-- 博客视频 -->
 		<action name="*Video" class="videoAction" method="{1}Video">
 			<result name="forwardUpload">/WEB-INF/admin/uploadVideo.jsp</result>
+			<result name="forwardManage">/WEB-INF/admin/manageVideo.jsp</result>
 			<result name="display">/WEB-INF/admin/displayVideo.jsp</result>
 			<!-- 配置文件上传拦截器 -->
 			<interceptor-ref name="fileUpload">

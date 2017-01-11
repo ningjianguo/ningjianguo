@@ -16,6 +16,8 @@ public class Video implements java.io.Serializable {
 	private String videoUploadEditer;
 	private Date videoUploadTime;
 	private Integer videoDownloadCount;
+	private Integer videoStatu;
+	private String videoFileName;
 
 	// Constructors
 
@@ -25,12 +27,14 @@ public class Video implements java.io.Serializable {
 
 	/** full constructor */
 	public Video(VideoTag videoTag, String videoName, String videoUploadEditer,
-			Date videoUploadTime, Integer videoDownloadCount) {
+			Date videoUploadTime, Integer videoDownloadCount,Integer videoStatu,String videoFileName) {
 		this.videoTag = videoTag;
 		this.videoName = videoName;
 		this.videoUploadEditer = videoUploadEditer;
 		this.videoUploadTime = videoUploadTime;
 		this.videoDownloadCount = videoDownloadCount;
+		this.videoStatu = videoStatu;
+		this.videoFileName = videoFileName;
 	}
 
 	// Property accessors
@@ -41,6 +45,20 @@ public class Video implements java.io.Serializable {
 
 	public void setVideoId(Integer videoId) {
 		this.videoId = videoId;
+	}
+	
+	/**
+	 * @return the videoFileName
+	 */
+	public String getVideoFileName() {
+		return videoFileName;
+	}
+
+	/**
+	 * @param videoFileName the videoFileName to set
+	 */
+	public void setVideoFileName(String videoFileName) {
+		this.videoFileName = videoFileName;
 	}
 
 	public VideoTag getVideoTag() {
@@ -83,4 +101,18 @@ public class Video implements java.io.Serializable {
 		this.videoDownloadCount = videoDownloadCount;
 	}
 
+	/**
+	 * @return the videoStatu
+	 */
+	public Integer getVideoStatu() {
+		return videoStatu;
+	}
+
+	/**
+	 * @param videoStatu the videoStatu to set
+	 */
+	public void setVideoStatu(Integer videoStatu) {
+		this.videoStatu = videoStatu;
+	}
+	
 }

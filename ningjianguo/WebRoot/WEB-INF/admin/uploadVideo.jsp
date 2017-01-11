@@ -55,7 +55,7 @@
 		$("#fileForm").submit();
 	}
 </script>
-<body>
+<body style="margin-top: 10px;">
 	<form class="form-horizontal" id="fileForm" role="form"
 		action="uploadVideo" method="post" enctype="multipart/form-data">
 		<div class="form-group">

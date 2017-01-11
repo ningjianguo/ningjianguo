@@ -30,15 +30,35 @@ public class VideoAction extends BaseAction<Video> {
 	private String videoFileName;
 	private String videoCategories;
 	private String videoName;
-	/*
+	/**
 	 * 前往视频上传页面
 	 */
 	public String forwardUploadVideo() {
 		request.setAttribute("tags", videoServiceImpl.getAllVideoTag());
 		return "forwardUpload";
 	}
-
-	/*
+	/**
+	 * 前往视频管理页面
+	 * @return
+	 */
+	public String forwardManageVideo(){
+		return "forwardManage";
+	}
+	
+	/**
+	 * 加载视频信息
+	 */
+	public String loadVideo(){
+		response.setCharacterEncoding("UTF-8");
+		try {
+			response.getWriter().write(videoServiceImpl.getVideoAllInfo());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/**
 	 * 文件上传
 	 */
 	public String uploadVideo() {
@@ -53,7 +73,7 @@ public class VideoAction extends BaseAction<Video> {
 		return displayVideo();
 	}
 	
-	/*
+	/**
 	 * 通过父目录获取子目录
 	 */
 	
@@ -62,7 +82,7 @@ public class VideoAction extends BaseAction<Video> {
 		return SUCCESS;
 	}
 	
-	/*
+	/**
 	 * 展示视频
 	 */
 	public String displayVideo(){
@@ -76,10 +96,49 @@ public class VideoAction extends BaseAction<Video> {
 	 * 根据videoId获取videoName
 	 */
 	public String jsonVideo(){
-		videoName = videoServiceImpl.getVideo(getModel().getVideoId());
+		videoName = videoServiceImpl.getVideoName(getModel().getVideoId());
 		return SUCCESS;
+	} 
+	
+	/**
+	 * 加载视频标签
+	 */
+	public String loadTagVideo(){
+		printJsonStringToBrowser(videoServiceImpl.getAllTagType());
+		return null;
 	}
 	
+	/**
+	 * 加载视频发布状态
+	 */
+	public String loadStatuVideo(){
+		printJsonStringToBrowser(videoServiceImpl.getVideoStatu());
+		return null;
+	}
+	
+	/**
+	 * 修改视频信息
+	 */
+	public String updateVideo(){
+		try {
+			response.getWriter().write(videoServiceImpl.updateVideo(getModel()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 删除视频信息
+	 */
+	public String deleteVideo(){
+		try {
+			response.getWriter().write(videoServiceImpl.deleteVideo(getModel()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	/**
 	 * @return the video
 	 */

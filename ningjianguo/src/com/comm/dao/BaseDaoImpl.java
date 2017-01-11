@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONObject;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BaseDaoImpl<T> implements IBaseDao<T> {
 	protected Class<T> domainClass;
-
+	
 	@Resource
 	private SessionFactory sessionFactory;
 

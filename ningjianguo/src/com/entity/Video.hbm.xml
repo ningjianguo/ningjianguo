@@ -25,6 +25,11 @@
                 <comment>视频发布者</comment>
             </column>
         </property>
+        <property name="videoFileName" type="string">
+            <column name="video_file_name" length="50" not-null="true">
+                <comment>视频文件全名</comment>
+            </column>
+        </property>
         <property name="videoUploadTime" type="date">
             <column name="video_upload_time" length="0" not-null="true">
                 <comment>视频上传时间</comment>
@@ -33,6 +38,11 @@
         <property name="videoDownloadCount" type="integer">
             <column name="video_download_count" not-null="true">
                 <comment>视频下载次数</comment>
+            </column>
+        </property>
+        <property name="videoStatu" type="integer">
+            <column name="video_statu" not-null="true">
+                <comment>视频发布状态</comment>
             </column>
         </property>
     </class>

@@ -33,9 +33,9 @@ import com.util.JsonUtil;
  */
 @Service
 public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticleService {
-	private JSONObject jobj;
 	@Resource
 	private IArticle articleDaoImpl;
+	private JSONObject jobj;
 	
 	@Override
 	public List<ArticleTag> getAllArticleTag() {
@@ -94,7 +94,7 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 				maps.put("articleReaderCount", article.getArticleReaderCount().intValue());
 				list.add(maps);
 			}
-			jobj = new JSONObject();//new一个JSON  
+			jobj = new JSONObject();
             jobj.accumulate("total",getArticleTotalSize());//total代表一共有多少数据  
             jobj.accumulate("rows", list);//row是代表显示的页的数据  
 		} catch (Exception e) {

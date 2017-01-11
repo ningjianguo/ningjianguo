@@ -3,6 +3,7 @@ package com.service;
 import java.util.List;
 
 import com.entity.Video;
+import com.entity.VideoTag;
 
 /**
 	@project:ningjianguo
@@ -13,11 +14,18 @@ import com.entity.Video;
 	@description:视频业务接口
  */
 public interface IVideoService {
-	
+	/**
+	 * 获得所有视频的类型(json格式)
+	 */
+	public String getAllTagType();
+	/**
+	 * 获得所有视频的状态(json格式)
+	 */
+	public String getVideoStatu();
 	/**
 	 * 获得所有视频标签
 	 */
-	public List<Video> getAllVideoTag();
+	public List<VideoTag> getAllVideoTag();
 	
 	/**
 	 * 视频上传
@@ -43,6 +51,28 @@ public interface IVideoService {
 	 * @param videoId 视频ID
 	 * @return videoName
 	 */
-	public String getVideo(int videoId);
+	public String getVideoName(int videoId);
+	
+	/**
+	 * 获得视频所有信息
+	 * @return Json格式视频信息
+	 */
+	public String getVideoAllInfo();
+	
+	/**
+	 * 获得视频条目数
+	 */
+	public int getVideoTotalSize();
+
+	/**
+	 * 更新视频信息
+	 * @return json格式视频信息
+	 */
+	public String updateVideo(Video video);
+
+	/**
+	 * 删除视频
+	 */
+	public String deleteVideo(Video video);
 }
 	
