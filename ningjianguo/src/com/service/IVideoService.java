@@ -44,7 +44,7 @@ public interface IVideoService {
 	/**
 	 * 获得最近上传的一部视频
 	 */
-	public int getNewVideoId();
+	public int getMaxVideoId();
 	
 	/**
 	 * 获得视频名称

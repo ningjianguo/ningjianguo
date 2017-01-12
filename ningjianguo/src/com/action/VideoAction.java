@@ -30,6 +30,7 @@ public class VideoAction extends BaseAction<Video> {
 	private String videoFileName;
 	private String videoCategories;
 	private String videoName;
+
 	/**
 	 * 前往视频上传页面
 	 */
@@ -37,18 +38,20 @@ public class VideoAction extends BaseAction<Video> {
 		request.setAttribute("tags", videoServiceImpl.getAllVideoTag());
 		return "forwardUpload";
 	}
+
 	/**
 	 * 前往视频管理页面
+	 * 
 	 * @return
 	 */
-	public String forwardManageVideo(){
+	public String forwardManageVideo() {
 		return "forwardManage";
 	}
-	
+
 	/**
 	 * 加载视频信息
 	 */
-	public String loadVideo(){
+	public String loadVideo() {
 		response.setCharacterEncoding("UTF-8");
 		try {
 			response.getWriter().write(videoServiceImpl.getVideoAllInfo());
@@ -58,87 +61,95 @@ public class VideoAction extends BaseAction<Video> {
 		}
 		return null;
 	}
+
 	/**
-	 * 文件上传
+	 * 视频上传
 	 */
 	public String uploadVideo() {
-		videoServiceImpl.uploadVideo(getModel());
-		try {
-			FileUtils.copyFile(video,
-					new File(FilePathUtil.getValue("uploadFilePath") + "/" + getModel().getVideoName()+"_blog_"+videoServiceImpl.getNewVideoId()
-							+ "." + videoContentType.split("/")[1]));
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (videoServiceImpl.uploadVideo(getModel())) {
+			try {
+				FileUtils.copyFile(video,
+						new File(FilePathUtil.getValue("uploadFilePath") + "/"
+								+ getModel().getVideoName() + "_blog_"
+								+ videoServiceImpl.getMaxVideoId() + "."
+								+ videoContentType.split("/")[1]));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return displayVideo();
 	}
-	
+
 	/**
 	 * 通过父目录获取子目录
 	 */
-	
-	public String videoCategory(){
-		videoCategories = videoServiceImpl.getCategories(getModel().getVideoTag().getVideoTagId());
+
+	public String videoCategory() {
+		videoCategories = videoServiceImpl.getCategories(getModel()
+				.getVideoTag().getVideoTagId());
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 展示视频
 	 */
-	public String displayVideo(){
+	public String displayVideo() {
 		request.setAttribute("tags", videoServiceImpl.getAllVideoTag());
-			int videoId = videoServiceImpl.getNewVideoId();
-			request.setAttribute("videoId", videoId);
-			return "display";
+		int videoId = videoServiceImpl.getMaxVideoId();
+		request.setAttribute("videoId", videoId);
+		return "display";
 	}
-	
+
 	/**
 	 * 根据videoId获取videoName
 	 */
-	public String jsonVideo(){
+	public String jsonVideo() {
 		videoName = videoServiceImpl.getVideoName(getModel().getVideoId());
 		return SUCCESS;
-	} 
-	
+	}
+
 	/**
 	 * 加载视频标签
 	 */
-	public String loadTagVideo(){
+	public String loadTagVideo() {
 		printJsonStringToBrowser(videoServiceImpl.getAllTagType());
 		return null;
 	}
-	
+
 	/**
 	 * 加载视频发布状态
 	 */
-	public String loadStatuVideo(){
+	public String loadStatuVideo() {
 		printJsonStringToBrowser(videoServiceImpl.getVideoStatu());
 		return null;
 	}
-	
+
 	/**
 	 * 修改视频信息
 	 */
-	public String updateVideo(){
+	public String updateVideo() {
 		try {
-			response.getWriter().write(videoServiceImpl.updateVideo(getModel()));
+			response.getWriter()
+					.write(videoServiceImpl.updateVideo(getModel()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 删除视频信息
 	 */
-	public String deleteVideo(){
+	public String deleteVideo() {
 		try {
-			response.getWriter().write(videoServiceImpl.deleteVideo(getModel()));
+			response.getWriter()
+					.write(videoServiceImpl.deleteVideo(getModel()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+
 	/**
 	 * @return the video
 	 */
@@ -184,7 +195,6 @@ public class VideoAction extends BaseAction<Video> {
 		this.videoFileName = videoFileName;
 	}
 
-
 	/**
 	 * @return the videoCategories
 	 */
@@ -198,5 +208,5 @@ public class VideoAction extends BaseAction<Video> {
 	public String getVideoName() {
 		return videoName;
 	}
-	
+
 }

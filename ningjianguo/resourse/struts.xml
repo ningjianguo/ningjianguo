@@ -42,4 +42,5 @@
 	<include file="indexBean.xml"></include>
 	<include file="articleBean.xml"></include>
 	<include file="videoBean.xml"></include>
+	<include file="fileBean.xml"></include>
 </struts>    

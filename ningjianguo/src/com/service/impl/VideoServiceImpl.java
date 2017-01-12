@@ -13,7 +13,6 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONObject;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +49,7 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 
 	@Override
 	public Boolean uploadVideo(Video v) {
-		int newVideoId = getNewVideoId();
+		int newVideoId = getMaxVideoId();
 		Map session = ActionContext.getContext().getSession();
 		User admin = (User) session.get("admin");
 		v.setVideoDownloadCount(0);
@@ -65,7 +64,7 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 						.createSQLQuery(
 								"update video set video_file_name=:filename where video_file_name=:name")
 						.setString("filename",
-								v.getVideoName() + "_blog_" + getNewVideoId())
+								v.getVideoName() + "_blog_" + getMaxVideoId())
 						.setString("name",
 								v.getVideoName() + "_blog_" + (newVideoId + 1))
 						.executeUpdate();
@@ -84,7 +83,7 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 	}
 
 	@Override
-	public int getNewVideoId() {
+	public int getMaxVideoId() {
 		try {
 			Query query = getSession().createSQLQuery(
 					"select ifnull(max(video_id),0) from video");

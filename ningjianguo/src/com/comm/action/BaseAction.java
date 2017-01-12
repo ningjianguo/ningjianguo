@@ -15,6 +15,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;
 import com.service.IArticleService;
 import com.service.ICategoryService;
+import com.service.IFileService;
 import com.service.IVideoService;
 
 public class BaseAction<T> extends ActionSupport implements ModelDriven<T> {
@@ -26,6 +27,8 @@ public class BaseAction<T> extends ActionSupport implements ModelDriven<T> {
 	protected IArticleService articleServiceImpl;
 	@Resource
 	protected IVideoService videoServiceImpl;
+	@Resource
+	protected IFileService fileServiceImpl;
 	
 	
 	protected T model;
