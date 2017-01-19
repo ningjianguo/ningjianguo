@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.hibernate.Query;
@@ -22,7 +23,6 @@ import com.entity.ArticleTag;
 import com.entity.User;
 import com.opensymphony.xwork2.ActionContext;
 import com.service.IArticleService;
-import com.util.JsonUtil;
 /*
 	@project:ningjianguo
 	@author:Techape
@@ -63,7 +63,6 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 			save(article);
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -71,14 +70,14 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 	/**
 	 * 获取文章标签的最大id值
 	 */
-	public int getMaxTagId(){
+	private int getMaxTagId(){
 		Query query = getSession().createSQLQuery("select max(article_tag_id) from article_tag");
 		return (int) query.list().get(0);
 	}
 
 	@Override
 	public String getAllArticle(int pageNo, int pageSize) {
-		List<Article> articles = getPaging(pageNo,pageSize);
+		List<Article> articles = getPaging(pageNo,pageSize,null);
 		Map<String, Object> maps = null;
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		try {
@@ -90,7 +89,7 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 				maps.put("articleType", articleType(article.getArticleType()));
 				maps.put("articleEditer", article.getArticleEditer());
 				maps.put("articleTime", new SimpleDateFormat("yyyy-MM-dd").format(article.getArticleTime()));
-				maps.put("articleStatu", articleStatu(article.getArticleStatu().intValue()));
+				maps.put("articleStatu", releaseStatu(article.getArticleStatu().intValue()));
 				maps.put("articleReaderCount", article.getArticleReaderCount().intValue());
 				list.add(maps);
 			}
@@ -113,41 +112,24 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 	/**
 	 * 判断文章类型
 	 */
-	public String articleType(int num){
+	private String articleType(int num){
 		String temp = null;
 		switch (num) {
 		case 1:
-			temp = "原创";
+			temp = ARTICLE_SOURCE_SELF;
 			break;
 
 		case 2:
-			temp = "转载";
+			temp = ARTICLE_SOURCE_OTHER;
 			break;
 			
 		case 3:
-			temp = "翻译";
+			temp = ARTICLE_SOURCE_TRANSLATE;
 			break;
 		}
 		return temp;
 	}
 	
-	/**
-	 * 判断文章状态
-	 */
-	public String articleStatu(int num){
-		String temp = null;
-		switch (num) {
-		case 1:
-			temp = "已发布";
-			break;
-
-		case 2:
-			temp = "未发布";
-			break;
-		}
-		return temp;
-	}
-
 	@Override
 	public String getAllTag() {
 		List<ArticleTag> tags = articleDaoImpl.getAllArticleTag();
@@ -159,7 +141,7 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 			maps.put("tagName", articleTag.getArticleTagName());
 			tagList.add(maps);
 		}
-		return JsonUtil.toJsonString(tagList);
+		return JSONArray.fromObject(tagList).toString();
 	}
 
 	@Override
@@ -168,16 +150,16 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 		Map<String,Object> type2 = new HashMap<String, Object>();
 		Map<String,Object> type3 = new HashMap<String, Object>();
 		List<Map<String,Object>> typeList = new ArrayList<Map<String,Object>>();
-		type1.put("typeName", "原创");
+		type1.put("typeName", ARTICLE_SOURCE_SELF);
 		type1.put("typeId", 1);
-		type2.put("typeName", "转载");
+		type2.put("typeName", ARTICLE_SOURCE_OTHER);
 		type2.put("typeId", 2);
-		type3.put("typeName", "翻译");
+		type3.put("typeName", ARTICLE_SOURCE_TRANSLATE);
 		type3.put("typeId", 3);
 		typeList.add(type1);
 		typeList.add(type2);
 		typeList.add(type3);
-		return JsonUtil.toJsonString(typeList);
+		return JSONArray.fromObject(typeList).toString();
 	}
 
 	@Override
@@ -185,18 +167,18 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 		Map<String,Object> statu1 = new HashMap<String, Object>();
 		Map<String,Object> statu2 = new HashMap<String, Object>();
 		List<Map<String,Object>> statuList = new ArrayList<Map<String,Object>>();
-		statu1.put("statuName", "已发布");
+		statu1.put("statuName", FILE_STATU_RELEASE);
 		statu1.put("statuId", 1);
-		statu2.put("statuName", "未发布");
+		statu2.put("statuName", FILE_STATU_NORELEASE);
 		statu2.put("statuId", 2);
 		statuList.add(statu1);
 		statuList.add(statu2);
-		return JsonUtil.toJsonString(statuList);
+		return JSONArray.fromObject(statuList).toString();
 	}
 	
 	@Override
 	public String updateArticle(Article article) {
-		return JsonUtil.toJsonString(articleDaoImpl.updateArticle(article));
+		return JSONArray.fromObject(articleDaoImpl.updateArticle(article)).toString();
 	}
 
 	@Override

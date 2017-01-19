@@ -43,7 +43,7 @@
         <header class="main-header">
             <a href="index.html" target="_blank" class="logo">
                 <span class="logo-mini">BLOG</span>
-                <span class="logo-lg"><strong>宁建国的</strong>个人博客</span>
+                <span class="logo-lg"><strong>${sessionScope.admin.userRealityName}的</strong>个人博客</span>
             </a>
             <nav class="navbar navbar-static-top">
                 <a class="sidebar-toggle">
@@ -73,7 +73,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                <img src="${ctx}/images/isme.png" class="user-image" alt="User Image">
                               
-                                <span class="hidden-xs">Administrator</span>
+                                <span class="hidden-xs">${sessionScope.admin.userRealityName}</span>
                             </a>
                             <ul class="dropdown-menu pull-right">
                                 <li><a class="menuItem" data-id="userInfo" href="/SystemManage/User/Info"><i class="fa fa-user"></i>个人信息</a></li>

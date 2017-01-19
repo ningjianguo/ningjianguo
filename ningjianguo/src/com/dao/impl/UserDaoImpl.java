@@ -1,7 +1,5 @@
 package com.dao.impl;
 
-import java.math.BigInteger;
-
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -21,16 +19,11 @@ import com.entity.User;
 public class UserDaoImpl extends BaseDaoImpl<User> implements IUser {
 
 	@Override
-	public Boolean isExistUser(User user) {
-		// TODO Auto-generated method stub
-		Query query = getSession().createSQLQuery("select count(*) from user where user_name=? and user_password=?")
-					.setString(0, user.getUserName()).setString(1, user.getUserPassword());
-		BigInteger count = (BigInteger)query.list().get(0);
-		if(count.intValue() == 0){
-			return false;
-		}else{
-			return true;
-		}
+	public User isExistUser(User validateUser) {
+			Query query = getSession().createQuery("from User where userName=? and userPassword=?")
+						.setString(0, validateUser.getUserName()).setString(1, validateUser.getUserPassword());
+			User user = (User) query.uniqueResult();
+		return user == null ? null:user;
 	}
 }
 

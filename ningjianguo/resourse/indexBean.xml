@@ -5,11 +5,11 @@
 	<package name="indexBean" namespace="/" extends="default">
 
 		<!--后台登录页面 -->
-		<action name="*Login" class="loginAction" method="{1}Login">
+		<action name="*Login" class="userAction" method="{1}Login">
 			<result name="index" type="redirectAction">index</result>
 		</action>
 
-		<action name="login" class="loginAction" method="forwardLogin">
+		<action name="login" class="userAction" method="forwardLogin">
 			<result name="success">/WEB-INF/admin/adminlogin.jsp</result>
 		</action>
 		
@@ -21,6 +21,7 @@
 		
 		<action name="welcome" class="indexAction" method="welcome">
 			<result name="success">/WEB-INF/admin/welcome.jsp</result>
+			<interceptor-ref name="myLoginStack"></interceptor-ref>
 		</action>
 
 		<!-- 目录的获取 -->
@@ -28,6 +29,7 @@
 			<result name="category" type="json">
 				<param name="categories">categories</param>
 			</result>
+			<interceptor-ref name="myLoginStack"></interceptor-ref>
 		</action>
 
 	</package>

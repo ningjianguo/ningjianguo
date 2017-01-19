@@ -11,10 +11,13 @@
             <generator class="native" />
         </id>
         <property name="userName" type="string">
-            <column name="user_name" length="50" not-null="true" />
+            <column name="user_name" length="50"  />
         </property>
         <property name="userPassword" type="string">
-            <column name="user_password" length="50" not-null="true" />
+            <column name="user_password" length="50"  />
+        </property>
+        <property name="userRealityName" type="string">
+        	<column name="user_reality_name" length="50"></column>
         </property>
     </class>
 </hibernate-mapping>

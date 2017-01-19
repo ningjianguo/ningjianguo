@@ -3,6 +3,7 @@ package com.dao.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import com.comm.dao.BaseDaoImpl;
@@ -30,30 +31,31 @@ public class ArticleDaoImpl extends BaseDaoImpl<Article> implements IArticle {
 
 	@Override
 	public int deleteArticle(int articleId) {
-		int count = 0;
 		try {
-			Query query = getSession().createSQLQuery(
-					"delete from article where article_id =:id");
-			count = query.setParameter("id", articleId).executeUpdate();
-			return count;
+			Article article = (Article) getSession().get(Article.class, articleId);
+			getSession().delete(article);
+			return 1;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return count;
 		}
+		return 0;
 	}
 
 	@Override
 	public int updateArticle(Article article) {
 		int count = 0;
+		Session session = getSession();
 		try {
-			Query query = getSession()
-					.createSQLQuery(
-							"update article set article_title=:title , article_type=:type , article_statu=:statu , article_tag_id=:tagid where article_id=:id");
-			count = query.setString("title", article.getArticleTitle())
-					.setInteger("type", article.getArticleType())
-					.setInteger("statu", article.getArticleStatu())
-					.setInteger("tagid", queryTagId(article.getArticleTag().getArticleTagName()))
-					.setInteger("id", article.getArticleId()).executeUpdate();
+			int tagId = queryTagId(article.getArticleTag().getArticleTagName());
+			Article updateArticle = (Article) session.get(Article.class,article.getArticleId());
+			updateArticle.setArticleTitle(article.getArticleTitle());
+			updateArticle.getArticleTag().setArticleTagId(tagId);
+			updateArticle.setArticleType(article.getArticleType());
+			updateArticle.setArticleStatu(article.getArticleStatu());
+			session.clear();//清除缓存，避免缓存干扰数据的更新
+			session.update(updateArticle);
+			session.flush();//必须刷新才能更新到数据库,否则只是更新缓存
+			count = 1;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -65,10 +67,14 @@ public class ArticleDaoImpl extends BaseDaoImpl<Article> implements IArticle {
 	 * @param tagName 标签名
 	 * @return 标签ID
 	 */
-	@SuppressWarnings("unchecked")
-	public int queryTagId(String tagName){
-		Query query = getSession().createSQLQuery("select article_tag_id from article_tag where article_tag_name=?").setString(0, tagName);
-		List<Integer> tagIds = query.list();
-		return tagIds.get(0);
+	private int queryTagId(String tagName){
+		ArticleTag tag = null;
+		try {
+			Query query = getSession().createQuery("from ArticleTag where articleTagName=:tagName").setParameter("tagName", tagName);
+			tag =  (ArticleTag) query.uniqueResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tag.getArticleTagId();
 	}
 }

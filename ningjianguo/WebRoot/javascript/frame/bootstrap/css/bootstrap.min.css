@@ -1066,10 +1066,10 @@ a.badge:focus,a.badge:hover{color:#fff;text-decoration:none;cursor:pointer}
 .jumbotron .container{max-width:100%}
 @media screen and (min-width:768px){.jumbotron{padding:48px 0}
 .container .jumbotron,.container-fluid .jumbotron{padding-right:60px;padding-left:60px}
-.jumbotron .h1,.jumbotron h1{font-size:63px}}.thumbnail{display:block;padding:4px;margin-bottom:20px;line-height:1.42857143;background-color:#fff;border:1px solid #ddd;border-radius:4px;-webkit-transition:border .2s ease-in-out;-o-transition:border .2s ease-in-out;transition:border .2s ease-in-out}
+.jumbotron .h1,.jumbotron h1{font-size:63px}}.thumbnail{display:block;padding:0px;margin-bottom:10px;line-height:1.42857143;background-color:#fff;border:1px solid #ddd;border-radius:4px;-webkit-transition:border .2s ease-in-out;-o-transition:border .2s ease-in-out;transition:border .2s ease-in-out}
 .thumbnail a>img,.thumbnail>img{margin-right:auto;margin-left:auto}
 a.thumbnail.active,a.thumbnail:focus,a.thumbnail:hover{border-color:#337ab7}
-.thumbnail .caption{padding:9px;color:#333}
+.thumbnail .caption{padding-top:0px;padding-bottom:9px;padding-left:9px;padding-right:9px;color:#333}
 .alert{padding:15px;margin-bottom:20px;border:1px solid transparent;border-radius:4px}
 .alert h4{margin-top:0;color:inherit}
 .alert .alert-link{font-weight:700}

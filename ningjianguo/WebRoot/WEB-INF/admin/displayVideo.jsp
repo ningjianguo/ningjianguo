@@ -57,10 +57,10 @@
 												for (var i = 0; i < categories.length; i++) {
 													ul += "<li class='ctge'><a href='javascript:video("
 															+ '"'
-															+ categories[i][0]
+															+ categories[i].videoId
 															+ '"'
 															+ ")'><span style='margin-right: 20px;'>&gt;</span>"
-															+ categories[i][1]
+															+ categories[i].videoName
 															+ "</a></li>"
 												}
 												ul += "</ul"; 

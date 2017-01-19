@@ -3,6 +3,7 @@ package com.dao.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import com.comm.dao.BaseDaoImpl;
@@ -37,11 +38,11 @@ public class VideoDaoImpl extends BaseDaoImpl<Video> implements IVideo {
 	@Override
 	public List<Video> getCategories(int p_categoryId) {
 		try {
-			Query query = getSession().createSQLQuery("select video_id,video_name from video where video_tag_id=?");
+			Query query = getSession().createQuery("from Video where videoTag.videoTagId=?");
 			query.setInteger(0, p_categoryId);
-			return query.list();
+			List<Video> categories = query.list();
+			return categories;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -57,14 +58,16 @@ public class VideoDaoImpl extends BaseDaoImpl<Video> implements IVideo {
 	@Override
 	public int updateVideo(Video video) {
 		int count = 0;
+		Session session = getSession();
 		try {
-			Query query = getSession()
-					.createSQLQuery(
-							"update video set video_name=:name , video_statu=:statu , video_tag_id=:tagid where video_id=:id");
-			count = query.setString("name", video.getVideoName())
-					.setInteger("statu", video.getVideoStatu())
-					.setInteger("tagid", queryTagId(video.getVideoTag().getVideoTagName()))
-					.setInteger("id", video.getVideoId()).executeUpdate();
+			Video updateVideo = (Video) session.get(Video.class, video.getVideoId());
+			updateVideo.setVideoName(video.getVideoName());
+			updateVideo.getVideoTag().setVideoTagId(queryTagId(video.getVideoTag().getVideoTagName()));
+			updateVideo.setVideoStatu(video.getVideoStatu());
+			session.clear();
+			session.update(updateVideo);
+			session.flush();
+			count = 1;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -76,25 +79,24 @@ public class VideoDaoImpl extends BaseDaoImpl<Video> implements IVideo {
 	 * @param tagName 标签名
 	 * @return 标签ID
 	 */
-	@SuppressWarnings("unchecked")
-	public int queryTagId(String tagName){
-		Query query = getSession().createSQLQuery("select video_tag_id from video_tag where video_tag_name=?").setString(0, tagName);
-		List<Integer> tagIds = query.list();
-		return tagIds.get(0);
+	private int queryTagId(String tagName){
+		Query query = getSession().createQuery("from VideoTag where videoTagName=?").setString(0, tagName);
+		VideoTag videoTag = (VideoTag) query.uniqueResult();
+		return videoTag.getVideoTagId();
 	}
 	
 	@Override
 	public int deleteVideo(int videoId) {
 		int count = 0;
 		try {
-			Query query = getSession().createSQLQuery(
-					"delete from video where video_id =:id").setInteger("id", videoId);
-			count = query.executeUpdate();
-			return count;
+			Session session = getSession();
+			Video deleteVideo = (Video) session.get(Video.class, videoId);
+			session.delete(deleteVideo);
+			count = 1;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return count;
 		}
+		return count;
 	}
 
 }

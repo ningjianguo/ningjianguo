@@ -12,7 +12,7 @@ import com.entity.User;
  */
 public interface IUserService {
 	/*用户登录*/
-	public Boolean login(User user);
+	public User login(User user);
 }
 
 

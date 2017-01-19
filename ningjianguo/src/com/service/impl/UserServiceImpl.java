@@ -23,8 +23,7 @@ public class UserServiceImpl implements IUserService {
 	IUser userDaoImpl;
 	
 	@Override
-	public Boolean login(User user) {
-		// TODO Auto-generated method stub
+	public User login(User user) {
 		return userDaoImpl.isExistUser(user);
 	}
 

@@ -4,12 +4,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONArray;
+
 import org.springframework.stereotype.Service;
 
 import com.dao.ICategory;
 import com.entity.Category;
 import com.service.ICategoryService;
-import com.util.JsonUtil;
 
 @Service
 public class CategoryServerImpl implements ICategoryService {
@@ -19,6 +20,6 @@ public class CategoryServerImpl implements ICategoryService {
 
 	public String getCategories() {
 		List<Category> categories = categoryDaoImpl.getCategories();
-		return JsonUtil.toJsonString(categories);
+		return JSONArray.fromObject(categories).toString();
 	}
 }

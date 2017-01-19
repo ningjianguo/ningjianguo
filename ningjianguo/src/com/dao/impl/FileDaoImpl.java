@@ -3,6 +3,7 @@ package com.dao.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import com.comm.dao.BaseDaoImpl;
@@ -31,13 +32,15 @@ public class FileDaoImpl extends BaseDaoImpl<File> implements IFile {
 	@Override
 	public int updateFile(File file) {
 		int count = 0;
+		Session session = getSession();
 		try {
-			Query query = getSession()
-					.createSQLQuery(
-							"update file set file_name=:name ,file_statu=:statu where file_id=:id");
-			count = query.setString("name", file.getFileName())
-					.setInteger("statu", file.getFileStatu())
-					.setInteger("id", file.getFileId()).executeUpdate();
+			File updateFile = (File) session.get(File.class, file.getFileId());
+			updateFile.setFileName(file.getFileName());
+			updateFile.setFileStatu(file.getFileStatu());
+			session.clear();
+			session.update(updateFile);
+			session.flush();
+			count = 1;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -49,14 +52,14 @@ public class FileDaoImpl extends BaseDaoImpl<File> implements IFile {
 	public int deleteFile(int fileId) {
 		int count = 0;
 		try {
-			Query query = getSession().createSQLQuery(
-					"delete from file where file_id =:id").setInteger("id", fileId);
-			count = query.executeUpdate();
-			return count;
+			Session session = getSession();
+			File deleteFile = (File) session.get(File.class, fileId);
+			session.delete(deleteFile);
+			count = 1;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return count;
 		}
+		return count;
 	}
 
 }

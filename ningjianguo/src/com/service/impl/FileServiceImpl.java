@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.hibernate.Query;
@@ -18,13 +19,8 @@ import org.springframework.stereotype.Service;
 import com.comm.dao.BaseDaoImpl;
 import com.dao.IFile;
 import com.entity.File;
-import com.entity.User;
-import com.entity.Video;
-import com.entity.VideoTag;
-import com.opensymphony.xwork2.ActionContext;
 import com.service.IFileService;
 import com.util.FilePathUtil;
-import com.util.JsonUtil;
 
 /**
  * @project:ningjianguo
@@ -49,7 +45,7 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 		f.setFileDownloadCount(0);
 		f.setFileStatu(1);
 		f.setFileUploadTime(new Date());
-		f.setFileZipName(f.getFileName() + "_blog_" + (newFileId + 1)+"."+fileContentType);
+		f.setFileZipName(f.getFileName() + FILE_SPLIT_SIGN + (newFileId + 1)+"."+fileContentType);
 		try {
 			save(f);
 			if (newFileId == 0) {
@@ -57,9 +53,9 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 						.createSQLQuery(
 								"update file set file_zip_name=:filename where file_zip_name=:name")
 						.setString("filename",
-								f.getFileName() + "_blog_" + getMaxFileId()+"."+fileContentType)
+								f.getFileName() + FILE_SPLIT_SIGN + getMaxFileId()+"."+fileContentType)
 						.setString("name",
-								f.getFileName() + "_blog_" + (newFileId + 1)+"."+fileContentType)
+								f.getFileName() + FILE_SPLIT_SIGN + (newFileId + 1)+"."+fileContentType)
 						.executeUpdate();
 			}
 		} catch (Exception e) {
@@ -85,7 +81,7 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 				maps.put("fileUploadTime", new SimpleDateFormat("yyyy-MM-dd")
 						.format(file.getFileUploadTime()));
 				maps.put("fileDownloadCount", file.getFileDownloadCount());
-				maps.put("fileStatu", FileStatu(file.getFileStatu()));
+				maps.put("fileStatu", releaseStatu(file.getFileStatu()));
 				maps.put("fileZipName", file.getFileZipName());
 				list.add(maps);
 			}
@@ -105,7 +101,6 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 			BigInteger fileId = (BigInteger) query.list().get(0);
 			return fileId.intValue();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return 0;
 		}
@@ -117,41 +112,26 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 		return count.intValue();
 	}
 
-	/**
-	 * 判断文件状态
-	 */
-	public String FileStatu(int num) {
-		String temp = null;
-		switch (num) {
-		case 1:
-			temp = "未发布";
-			break;
-
-		case 2:
-			temp = "已发布";
-			break;
-		}
-		return temp;
-	}
+	
 
 	@Override
 	public String getFileStatu() {
 		Map<String, Object> statu1 = new HashMap<String, Object>();
 		Map<String, Object> statu2 = new HashMap<String, Object>();
 		List<Map<String, Object>> statuList = new ArrayList<Map<String, Object>>();
-		statu1.put("statuName", "已发布");
+		statu1.put("statuName", FILE_STATU_RELEASE);
 		statu1.put("statuId", 1);
-		statu2.put("statuName", "未发布");
+		statu2.put("statuName", FILE_STATU_NORELEASE);
 		statu2.put("statuId", 2);
 		statuList.add(statu1);
 		statuList.add(statu2);
-		return JsonUtil.toJsonString(statuList);
+		return JSONArray.fromObject(statuList).toString();
 	}
 
 
 	@Override
 	public String updateFile(File file) {
-		return JsonUtil.toJsonString(fileDaoImpl.updateFile(file));
+		return JSONArray.fromObject(fileDaoImpl.updateFile(file)).toString();
 	}
 
 	@Override
@@ -159,9 +139,9 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 		jobj = new JSONObject();
 		//删除硬盘中的视频文件
 		try {
-			Query query = getSession().createSQLQuery("select file_zip_name from file where file_id=:id").setInteger("id", file.getFileId());
-			String fileZipName = (String) query.list().get(0);
-			java.io.File desFile = new java.io.File(FilePathUtil.getValue("uploadFilePath") + "/"+fileZipName);
+			Query query = getSession().createQuery("from File where fileId=:id").setInteger("id", file.getFileId());
+			File deleteFile = (File) query.uniqueResult();
+			java.io.File desFile = new java.io.File(FilePathUtil.getValue("uploadFilePath") + "/"+deleteFile.getFileZipName());
 			if(desFile.exists()){
 				if(desFile.delete()){
 					jobj.accumulate("success",fileDaoImpl.deleteFile(file.getFileId()));

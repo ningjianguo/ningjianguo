@@ -11,9 +11,18 @@
             <generator class="native" />
         </id>
         <property name="articleTagName" type="string">
-            <column name="article_tag_name" length="50" not-null="true">
+            <column name="article_tag_name" length="50" >
                 <comment>文章标签名</comment>
             </column>
         </property>
+        <set name="articles" inverse="true">
+            <key>
+                <column name="article_tag_id">
+                    <comment>文章标签ID</comment>
+                </column>
+            </key>
+            <one-to-many class="com.entity.Article" />
+        </set>
+        
     </class>
 </hibernate-mapping>

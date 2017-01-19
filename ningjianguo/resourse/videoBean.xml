@@ -13,8 +13,9 @@
 				<param name="allowedExtensions">mp4</param>
 				<param name="maximumSize">1073741824</param><!-- 1024b*1024b*1024b=1G -->
 			</interceptor-ref>
-			<!-- 引用默认的拦截器堆栈 -->
-			<interceptor-ref name="defaultStack" />
+			<!-- 引用默认的拦截器堆栈 
+			<interceptor-ref name="defaultStack" />-->
+			<interceptor-ref name="myLoginStack"></interceptor-ref>
 		</action>
 		<action name="videoCategory" class="videoAction" method="videoCategory">
 			<result name="success" type="json">
@@ -22,12 +23,14 @@
 				<!-- 默认将会序列所有有返回值的getter方法的值，而无论该方法是否有对应属性 -->
 				<param name="videoCategories">videoCategories</param>
 			</result>
+			<interceptor-ref name="myLoginStack"></interceptor-ref>
 		</action>
 
 		<action name="getVideoName" class="videoAction" method="jsonVideo">
 			<result name="success" type="json">
 				<param name="videoName">videoName</param>
 			</result>
+			<interceptor-ref name="myLoginStack"></interceptor-ref>
 		</action>
 	</package>
 </struts>    

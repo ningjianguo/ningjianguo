@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONObject;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,19 +42,38 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> getPaging(int pageNo, int pageSize) {
+	public List<T> getPaging(int pageNo, int pageSize,String queryLimit) {
 		try {
-			Query query = getSession().createQuery(" from  "+ domainClass.getSimpleName());  
+			String sql = " from "+ domainClass.getSimpleName()+(queryLimit == null ? "":" "+queryLimit);
+			Query query = getSession().createQuery(sql);  
 			//设置起点  
 			query.setFirstResult(pageSize*(pageNo-1));  
 			//设置每页显示多少个，设置多大结果。  
 			query.setMaxResults(pageSize);  
 			return query.list();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
+	}
+	/**
+	 * 判断文件的状态
+	 */
+	/**
+	 * 判断文件发布状态
+	 */
+	protected String releaseStatu(int num) {
+		String temp = null;
+		switch (num) {
+		case 1:
+			temp = "未发布";
+			break;
+
+		case 2:
+			temp = "已发布";
+			break;
+		}
+		return temp;
 	}
 
 }

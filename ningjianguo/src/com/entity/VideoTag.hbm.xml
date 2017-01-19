@@ -11,13 +11,13 @@
             <generator class="native" />
         </id>
         <property name="videoTagName" type="string">
-            <column name="video_tag_name" length="50" not-null="true">
+            <column name="video_tag_name" length="50">
                 <comment>视频标签名</comment>
             </column>
         </property>
         <set name="videos" inverse="true">
             <key>
-                <column name="video_tag_id" not-null="true">
+                <column name="video_tag_id">
                     <comment>视频标签ID</comment>
                 </column>
             </key>

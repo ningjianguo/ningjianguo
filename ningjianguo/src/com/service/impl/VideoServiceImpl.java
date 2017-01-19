@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.hibernate.Query;
@@ -24,7 +25,6 @@ import com.entity.VideoTag;
 import com.opensymphony.xwork2.ActionContext;
 import com.service.IVideoService;
 import com.util.FilePathUtil;
-import com.util.JsonUtil;
 
 /**
  * @project:ningjianguo
@@ -50,13 +50,13 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 	@Override
 	public Boolean uploadVideo(Video v) {
 		int newVideoId = getMaxVideoId();
-		Map session = ActionContext.getContext().getSession();
-		User admin = (User) session.get("admin");
+		Map mapSession = ActionContext.getContext().getSession();
+		User admin = (User) mapSession.get("admin");
 		v.setVideoDownloadCount(0);
 		v.setVideoStatu(1);
 		v.setVideoUploadEditer(admin.getUserName());
 		v.setVideoUploadTime(new Date());
-		v.setVideoFileName(v.getVideoName() + "_blog_" + (newVideoId + 1));
+		v.setVideoFileName(v.getVideoName() + FILE_SPLIT_SIGN + (newVideoId + 1));
 		try {
 			save(v);
 			if (newVideoId == 0) {
@@ -64,10 +64,11 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 						.createSQLQuery(
 								"update video set video_file_name=:filename where video_file_name=:name")
 						.setString("filename",
-								v.getVideoName() + "_blog_" + getMaxVideoId())
+								v.getVideoName() + FILE_SPLIT_SIGN + getMaxVideoId())
 						.setString("name",
-								v.getVideoName() + "_blog_" + (newVideoId + 1))
+								v.getVideoName() + FILE_SPLIT_SIGN + (newVideoId + 1))
 						.executeUpdate();
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,8 +79,16 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 
 	@Override
 	public String getCategories(int p_categoryId) {
-		List<Video> categories = videoDaoImpl.getCategories(p_categoryId);
-		return JsonUtil.toJsonString(categories);
+		  List<Video> categories = videoDaoImpl.getCategories(p_categoryId);
+		  List<Video> categories2 = new ArrayList<Video>();
+		  for (Video video : categories) {
+			Video v = new Video();
+			v.setVideoFileName(video.getVideoFileName());
+			v.setVideoName(video.getVideoName());
+			v.setVideoId(video.getVideoId());
+			categories2.add(v);
+		}
+		return JSONArray.fromObject(categories2).toString();
 	}
 
 	@Override
@@ -90,12 +99,12 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 			BigInteger videoId = (BigInteger) query.list().get(0);
 			return videoId.intValue();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return 0;
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getVideoName(int videoId) {
 		try {
@@ -103,10 +112,9 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 					.createSQLQuery(
 							"select video_id,video_name,video_file_name from video where video_id=?");
 			query.setInteger(0, videoId);
-			List<Video> video = query.list();
-			return JsonUtil.toJsonString(video);
+			List<Video> videos = query.list();
+			return JSONArray.fromObject(videos).toString();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -129,7 +137,7 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 				maps.put("videoDownloadCount", video.getVideoDownloadCount());
 				maps.put("videoTag.videoTagName", video.getVideoTag()
 						.getVideoTagName());
-				maps.put("videoStatu", videoStatu(video.getVideoStatu()));
+				maps.put("videoStatu", releaseStatu(video.getVideoStatu()));
 				maps.put("videoFileName", video.getVideoFileName() + ".mp4");
 				list.add(maps);
 			}
@@ -149,35 +157,18 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 		return count.intValue();
 	}
 
-	/**
-	 * 判断视频状态
-	 */
-	public String videoStatu(int num) {
-		String temp = null;
-		switch (num) {
-		case 1:
-			temp = "未发布";
-			break;
-
-		case 2:
-			temp = "已发布";
-			break;
-		}
-		return temp;
-	}
-
 	@Override
 	public String getVideoStatu() {
 		Map<String, Object> statu1 = new HashMap<String, Object>();
 		Map<String, Object> statu2 = new HashMap<String, Object>();
 		List<Map<String, Object>> statuList = new ArrayList<Map<String, Object>>();
-		statu1.put("statuName", "已发布");
+		statu1.put("statuName", FILE_STATU_RELEASE);
 		statu1.put("statuId", 1);
-		statu2.put("statuName", "未发布");
+		statu2.put("statuName", FILE_STATU_NORELEASE);
 		statu2.put("statuId", 2);
 		statuList.add(statu1);
 		statuList.add(statu2);
-		return JsonUtil.toJsonString(statuList);
+		return JSONArray.fromObject(statuList).toString();
 	}
 
 	@Override
@@ -191,12 +182,12 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 			maps.put("tagName", videoTag.getVideoTagName());
 			tagList.add(maps);
 		}
-		return JsonUtil.toJsonString(tagList);
+		return JSONArray.fromObject(tagList).toString();
 	}
 
 	@Override
 	public String updateVideo(Video video) {
-		return JsonUtil.toJsonString(videoDaoImpl.updateVideo(video));
+		return JSONArray.fromObject(videoDaoImpl.updateVideo(video)).toString();
 	}
 
 	@Override
@@ -204,9 +195,9 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 		jobj = new JSONObject();
 		//删除硬盘中的视频文件
 		try {
-			Query query = getSession().createSQLQuery("select video_file_name from video where video_id=:id").setInteger("id", video.getVideoId());
-			String videoFileName = (String) query.list().get(0);
-			File desFile = new File(FilePathUtil.getValue("uploadFilePath") + "/"+videoFileName+".mp4");
+			Query query = getSession().createQuery("from Video where videoId=:id").setInteger("id", video.getVideoId());
+			Video deleteVideo = (Video) query.uniqueResult();
+			File desFile = new File(FilePathUtil.getValue("uploadFilePath") + "/"+deleteVideo.getVideoFileName()+".mp4");
 			if(desFile.exists()){
 				if(desFile.delete()){
 					jobj.accumulate("success",videoDaoImpl.deleteVideo(video.getVideoId()));

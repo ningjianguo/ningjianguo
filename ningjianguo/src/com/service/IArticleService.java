@@ -16,6 +16,23 @@ import com.entity.ArticleTag;
 public interface IArticleService {
 	
 	/**
+	 * 文章出处类型
+	 * @param ARTICLE_SOURCE_SELF 原创
+	 */
+	final static String ARTICLE_SOURCE_SELF = "原创";
+	
+	/**
+	 * 文章出处类型
+	 * @param ARTICLE_SOURCE_OTHER 转载
+	 */
+	final static String ARTICLE_SOURCE_OTHER = "转载";
+	
+	/**
+	 * 文章出处类型
+	 * @param ARTICLE_SOURCE_TRANSLATE 翻译
+	 */
+	final static String ARTICLE_SOURCE_TRANSLATE = "翻译";
+	/**
 	 * 获得所有博文的标签
 	 */
 	public List<ArticleTag> getAllArticleTag();
