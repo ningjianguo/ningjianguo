@@ -8,18 +8,18 @@ import net.sf.json.JSONArray;
 
 import org.springframework.stereotype.Service;
 
+import com.comm.dao.BaseDaoImpl;
 import com.dao.ICategory;
 import com.entity.Category;
 import com.service.ICategoryService;
 
 @Service
-public class CategoryServerImpl implements ICategoryService {
+public class CategoryServerImpl extends BaseDaoImpl<Category> implements ICategoryService {
 
 	@Resource
 	private ICategory categoryDaoImpl;
 
 	public String getCategories() {
-		List<Category> categories = categoryDaoImpl.getCategories();
-		return JSONArray.fromObject(categories).toString();
+		return JSONArray.fromObject(queryAllInfo()).toString();
 	}
 }

@@ -32,7 +32,7 @@ public class FileAction extends BaseAction<File> {
 	 * 前往文件上传页面
 	 */
 	public String forwardUploadFile() {
-		return "forwardUpload";
+		return "upload";
 	}
 
 	/**
@@ -41,19 +41,14 @@ public class FileAction extends BaseAction<File> {
 	 * @return
 	 */
 	public String forwardManageFile() {
-		return "forwardManage";
+		return "manage";
 	}
 
 	/**
 	 * 加载视频信息
 	 */
 	public String loadFile() {
-		response.setCharacterEncoding("UTF-8");
-		try {
-			response.getWriter().write(fileServiceImpl.getFileAllInfo());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(fileServiceImpl.getFileAllInfo(Integer.parseInt(page), Integer.parseInt(rows)));
 		return null;
 	}
 
@@ -106,11 +101,7 @@ public class FileAction extends BaseAction<File> {
 	 * 修改文件信息
 	 */
 	public String updateFile() {
-		try {
-			response.getWriter().write(fileServiceImpl.updateFile(getModel()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(fileServiceImpl.updateFile(getModel()));
 		return null;
 	}
 
@@ -118,11 +109,7 @@ public class FileAction extends BaseAction<File> {
 	 * 删除文件信息
 	 */
 	public String deleteFile() {
-		try {
-			response.getWriter().write(fileServiceImpl.deleteFile(getModel()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(fileServiceImpl.deleteFile(getModel()));
 		return null;
 	}
 

@@ -68,8 +68,8 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 
 
 	@Override
-	public String getFileAllInfo() {
-		List<File> files = fileDaoImpl.getFileAllInfo();
+	public String getFileAllInfo(int pageNo, int pageSize) {
+		List<File> files = getPaging(pageNo, pageSize, null);
 		Map<String, Object> maps = null;
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		JSONObject jobj = null;
@@ -107,9 +107,7 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 	}
 	@Override
 	public int getFileTotalSize() {
-		Query query = getSession().createSQLQuery("select count(*) from file");
-		BigInteger count = (BigInteger) query.list().get(0);
-		return count.intValue();
+		return queryAllInfo().size();
 	}
 
 	
@@ -120,9 +118,9 @@ public class FileServiceImpl extends BaseDaoImpl<File> implements
 		Map<String, Object> statu2 = new HashMap<String, Object>();
 		List<Map<String, Object>> statuList = new ArrayList<Map<String, Object>>();
 		statu1.put("statuName", FILE_STATU_RELEASE);
-		statu1.put("statuId", 1);
+		statu1.put("statuId", 2);
 		statu2.put("statuName", FILE_STATU_NORELEASE);
-		statu2.put("statuId", 2);
+		statu2.put("statuId", 1);
 		statuList.add(statu1);
 		statuList.add(statu2);
 		return JSONArray.fromObject(statuList).toString();

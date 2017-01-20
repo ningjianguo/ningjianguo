@@ -10,6 +10,9 @@
 .icon-clear{
 	background:url('icons/clear.png') no-repeat center center;
 }
+.icon-rubbish{
+	background:url('icons/rubbish.png') no-repeat center center;
+}
 .icon-remove{
 	background:url('icons/edit_remove.png') no-repeat center center;
 }

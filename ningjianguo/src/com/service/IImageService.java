@@ -27,10 +27,6 @@ public interface IImageService {
 	 */
 	public List<Image> getImageInfo(ImagePage iPage);
 	/**
-	 * 获得所有相片的状态(json格式)
-	 */
-	public String getImageStatu();
-	/**
 	 * 相片上传
 	 * @param Image v 对象
 	 * @return true(成功)、false(失败)
@@ -60,12 +56,12 @@ public interface IImageService {
 	 * 获得相片所有信息
 	 * @return Json格式相片信息
 	 */
-	public String getImageAllInfo();
+	public String getImageAllInfo(int pageNo, int pageSize, int folderId);
 	
 	/**
 	 * 获得相片条目数
 	 */
-	public int getImageTotalSize();
+	public int getImageTotalSize(int folderId);
 
 	/**
 	 * 更新相片信息
@@ -82,5 +78,25 @@ public interface IImageService {
 	 * 获取照片数据条数
 	 */
 	public ImagePage imageCount(int imageFolderId);
+	
+	/**
+	 * @return 相册状态
+	 */
+	public String getImageFolderStatu();
+	
+	/**
+	 * @return 相册名 (json格式)
+	 */
+	public String getAllImageFolder();
+	
+	/**
+	 * 更新相册信息
+	 */
+	public String updateImageFolder(Image image);
+	
+	/**
+	 * 删除相册
+	 */
+	public String deleteImageFolder(Image image);
 }
 	

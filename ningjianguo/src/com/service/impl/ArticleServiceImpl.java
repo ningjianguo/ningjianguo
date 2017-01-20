@@ -1,6 +1,5 @@
 package com.service.impl;
 
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Service;
@@ -23,10 +19,13 @@ import com.entity.ArticleTag;
 import com.entity.User;
 import com.opensymphony.xwork2.ActionContext;
 import com.service.IArticleService;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 /*
 	@project:ningjianguo
 	@author:Techape
-	@date:2016年12月24日 下午11:13:55
+	@date:2016年12月24日 下午11:13:55	
 	@email:1195726908@qq.com
 	@version:v1.0
 	@description:博文业务层实现类
@@ -104,9 +103,7 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 
 	@Override
 	public int getArticleTotalSize() {
-		Query query = getSession().createSQLQuery("select count(*) from article");
-		BigInteger count = (BigInteger) query.list().get(0);
-		return count.intValue();
+		return queryAllInfo().size();
 	}
 	
 	/**
@@ -168,9 +165,9 @@ public class ArticleServiceImpl extends BaseDaoImpl<Article> implements IArticle
 		Map<String,Object> statu2 = new HashMap<String, Object>();
 		List<Map<String,Object>> statuList = new ArrayList<Map<String,Object>>();
 		statu1.put("statuName", FILE_STATU_RELEASE);
-		statu1.put("statuId", 1);
+		statu1.put("statuId", 2);
 		statu2.put("statuName", FILE_STATU_NORELEASE);
-		statu2.put("statuId", 2);
+		statu2.put("statuId", 1);
 		statuList.add(statu1);
 		statuList.add(statu2);
 		return JSONArray.fromObject(statuList).toString();

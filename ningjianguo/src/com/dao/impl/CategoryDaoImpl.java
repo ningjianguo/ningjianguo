@@ -12,9 +12,8 @@ import com.entity.Category;
  public class CategoryDaoImpl extends BaseDaoImpl<Category>
    implements ICategory
  {
-   @SuppressWarnings("unchecked")
 public List<Category> getCategories()
    {
-     return getSession().createQuery("from Category").list();
+     return queryAllInfo();
    }
  }

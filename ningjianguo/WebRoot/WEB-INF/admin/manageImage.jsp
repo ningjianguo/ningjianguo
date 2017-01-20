@@ -15,119 +15,240 @@
 </head>
 <script type="text/javascript">
 	$(function() {
-		$('#dg').datagrid({
-			url : "loadVideo",
-			pageSize : 5,//默认选择的分页是每页5行数据  
-			pageList : [ 5, 10, 15, 20 ],//可以选择的分页集合  
-			nowrap : true,//设置为true，当数据长度超出列宽时将会自动截取  
+		//初始化数据
+		loadImageData(0); //加载全部数据、对相册不分类
+		//动态加载数据
+		$("#iFolder").combobox({
+			onChange : function(record) {
+				loadImageData($(this).combobox('getValue'));
+			}
 		});
-	})
+
+	});
+
+	//加载表格数据、加载对应相册的数据
+	function loadImageData(folderId) {
+		$('#dg').datagrid({
+			url : "loadImage?imageFolder.imageFolderId=" + folderId,
+			pageSize : 20, //默认选择的分页是每页5行数据  
+			pageList : [ 20, 25, 30, 40 ], //可以选择的分页集合  
+			nowrap : true, //设置为true，当数据长度超出列宽时将会自动截取  
+			//设置复选框属性
+			singleSelect : false,
+			selectOnCheck : true,
+			checkOnSelect : true
+		});
+	}
+
+	//图片添加路径
+	function imgFormatter(value, row, index) {
+		if ('' != value && null != value) {
+			return "<img onclick=displayImage(\"" + value + "\") style='width:50px;' src='../file/" + value + "' title='点击查看图片'/>";
+		}
+	}
+	function displayImage(img) {
+		var simg = "../file/" + img;
+		$('#displayImage').dialog({
+			title : '照片预览',
+			width : 380,
+			height : 500,
+			resizable : true,
+			closed : false,
+			cache : false,
+			modal : true
+		});
+		$("#simg").attr("src", simg).css('display', 'block');
+		;
+	}
 </script>
 <body>
-	<table id="dg" title="视频管理" class="easyui-datagrid" style="height:540"
+	<table id="dg" title="照片管理" class="easyui-datagrid" style="height:540"
 		toolbar="#toolbar" pagination="true" rownumbers="true"
 		fitColumns="true" singleSelect="true">
 		<thead>
 			<tr>
-				<th field="videoName" width="30" align="center">视频名称</th>
-				<th field="videoTag.videoTagName" width="20" align="center">视频标签</th>
-				<th field="videoUploadEditer" width="20" align="center">视频上传者</th>
-				<th field="videoUploadTime" width="20" align="center">视频上传时间</th>
-				<th field="videoDownloadCount" width="20" align="center">视频下载次数</th>
-				<th field="videoStatu" width="20" align="center">视频状态</th>
-				<th field="videoFileName" width="20" align="center">视频文件名称</th>
+				<th
+					data-options="field:'imageFileName', width:4, align:'center',formatter:imgFormatter">照片预览</th>
+				<th field="imageFolder.imageFolderName" width="20" align="center">所属相册</th>
+				<th field="imageUploadTime" width="20" align="center">上传时间</th>
+				<th field="imageFolder.imageFolderStatu" width="20" align="center">照片状态</th>
+				<th field="imageId" checkbox="true"></th>
 			</tr>
 		</thead>
 	</table>
 	<div id="toolbar">
-		<a href="forwardUploadVideo" class="easyui-linkbutton" iconCls="icon-add"
-			plain="true">上传视频</a> <a href="javascript:void(0)"
+		<a href="forwardUploadImage" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true">上传照片</a> <a href="javascript:void(0)"
 			class="easyui-linkbutton" iconCls="icon-edit" plain="true"
-			onclick="editVideo()">编辑视频</a> <a href="javascript:void(0)"
+			onclick="editImage()">编辑照片</a> <a href="javascript:void(0)"
 			class="easyui-linkbutton" iconCls="icon-remove" plain="true"
-			onclick="destroyVideo()">移除视频</a>
+			onclick="destroyImage()">移除照片</a> <a href="javascript:void(0)"
+			class="easyui-linkbutton" iconCls="icon-large-picture" plain="true"
+			onclick="editImageFolder()">编辑相册</a> <input name="imageFolderName"
+			class="easyui-combobox" id="iFolder" required="true" editable="false"
+			style="width:100px" value="全部"
+			data-options="valueField:'folderId',textField:'folderName',url:'loadImageFolder',panelHeight:'auto'" />
 	</div>
-
+	<div id="displayImage">
+		<img id="simg" width="365px" height="460px" style="display: none;">
+	</div>
 	<div id="dlg" class="easyui-dialog" style="width:400px" closed="true"
 		buttons="#dlg-buttons" data-options="modal:true">
 		<form id="fm" method="post" novalidate
 			style="margin:0;padding:20px 50px">
 			<div
-				style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">视频信息</div>
-				<input name="videoId" id="videoId" type="hidden"/>
+				style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">照片信息</div>
+			<input name="imageId" id="imageId" type="hidden" />
 			<div style="margin-bottom:10px">
-				<input name="videoName" id="videoName" class="easyui-textbox"
-					required="true" label="视频名称:" style="width:100%">
+				<input name="imageFolder.imageFolderName" class="easyui-combobox"
+					id="imageFolder" required="true" editable="false" label="所属相册:"
+					style="width:100%"
+					data-options="valueField:'folderId',textField:'folderName',url:'loadImageFolder',panelHeight:'auto'">
 			</div>
 			<div style="margin-bottom:10px">
-				<input name="videoTag.videoTagName" class="easyui-combobox" id="videoTag"
-					required="true" editable="false" label="视频标签:" style="width:100%"
-					data-options="valueField:'tagId',textField:'tagName',url:'loadTagVideo'">
+				<input name="imageFolder.imageFolderStatu" class="easyui-combobox"
+					required="true" editable="false" id="imageStatu" label="发布状态:"
+					style="width:100%" readonly="readonly">
+			</div>
+		</form>
+	</div>
+	<div id="dlg_imageFolder" class="easyui-dialog" style="width:400px"
+		closed="true" buttons="#dlg-buttons_folder" data-options="modal:true">
+		<form id="imageFolderForm" method="post" novalidate
+			style="margin:0;padding:20px 50px">
+			<div style="margin-bottom:10px">
+				<input name="imageFolder.imageFolderName" class="easyui-combobox"
+					id="imageFolder_" required="true" editable="false" label="相册名称:"
+					style="width:100%"
+					data-options="valueField:'folderId',textField:'folderName',url:'loadImageFolder',panelHeight:'auto'">
 			</div>
 			<div style="margin-bottom:10px">
-				<input name="videoStatu" class="easyui-combobox" required="true"
-					editable="false" id="videoStatu" label="发布状态:" style="width:100%"
-					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuVideo'">
+				<input name="imageFolder.imageFolderStatu" class="easyui-combobox"
+					required="true" editable="false" id="imageStatu_" label="发布状态:"
+					style="width:100%"
+					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuImageFolder',panelHeight:'auto'">
+			</div>
+			<div style="margin-bottom:10px">
+				<input class="easyui-validatebox easyui-textbox" name="message"
+					label="相册描述:" required="true" maxlength="80" id="arr_content"
+					validtype="length[0,80]" data-options="multiline:true"
+					style="width: 100%;height: 110px;" invalidMessage="最大长度80位"></input>
 			</div>
 		</form>
 	</div>
 	<div id="dlg-buttons">
 		<a href="javascript:void(0)" class="easyui-linkbutton c6"
-			iconCls="icon-ok" onclick="saveArticle()" style="width:90px">保存</a> <a
+			iconCls="icon-ok" onclick="saveImage()" style="width:90px">保存</a> <a
 			href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')"
 			style="width:90px">取消</a>
 	</div>
+	<div id="dlg-buttons_folder">
+	
+		<a href="javascript:void(0)"
+			class="easyui-linkbutton" iconCls="icon-rubbish" onclick="destroyImageFolder()"
+			style="width:90px">删除相册</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton c6"
+			iconCls="icon-ok" onclick="saveImageFolder()" style="width:90px">保存</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-cancel"
+			onclick="javascript:$('#dlg_imageFolder').dialog('close')"
+			style="width:90px">取消</a> 
+	</div>
 	<script type="text/javascript">
+		$(function(){
+			$.extend($.messager.defaults, {
+				ok : "确定",
+				cancel : "取消",
+				modal : true
+			});
+		})
 		var url;
-		function editVideo() {
+		function editImage() {
 			var row = $('#dg').datagrid('getSelected');
 			if (row) {
 				$('#dlg').dialog('open').dialog('center').dialog('setTitle',
-						'编辑视频信息');
+					'编辑照片信息');
 				$('#fm').form('load', row);
 			}
 		}
-		function saveArticle() {
-			switch ($('#videoStatu').combobox('getText')) {
-			case "未发布":
-				$('#videoStatu').val(1);
-				break;
-			case "已发布":
-				$('#videoStatu').val(2);
-				break;
-			}
+		function editImageFolder() {
+			$('#dlg_imageFolder').dialog('open').dialog('center').dialog('setTitle',
+				'编辑相册信息');
+		}
+		function saveImage() {
 			$.ajax({
-				type:"post",
-				url:"updateVideo",
-				dataType:"json",
-				cache:false,
-				data:{
-					"videoId":$('#videoId').val(),
-					"videoName":$('#videoName').val(),
-					"videoTag.videoTagName":$('#videoTag').combobox('getText'),
-					"videoStatu":$('#videoStatu').val()
-					},
-				success:function(data){
+				type : "post",
+				url : "updateImage",
+				dataType : "json",
+				cache : false,
+				data : {
+					"imageId" : $('#imageId').val(),
+					"imageFolder.imageFolderName" : $('#imageFolder').combobox('getText')
+				},
+				success : function(data) {
 					$('#dlg').dialog('close'); // close the dialog
 					$('#dg').datagrid('reload'); // reload the user data
 				}
 			})
 		}
-		function destroyVideo() {
+		function saveImageFolder() {
+			$.ajax({
+				type : "post",
+				url : "updateImageFolder",
+				dataType : "json",
+				cache : false,
+				data : {
+					"imageFolder.imageFolderStatu" : $('#imageStatu_').combobox('getValue'),
+					"imageFolder.imageFolderId" : $('#imageFolder_').combobox('getValue'),
+					"imageFolder.imageFolderDescription" : $('#arr_content').val()
+				},
+				success : function(data) {
+					$('#dlg_imageFolder').dialog('close'); // close the dialog
+					$('#dg').datagrid('reload'); // reload the user data
+				}
+			});
+		}
+		function destroyImageFolder(){
+			if($('#imageFolder_').combobox('getValue')!=""){
+				$.messager.confirm('警告',
+					"您确定要删除 " + $('#imageFolder_').combobox('getText') + " 相册吗?",
+					function(r) {
+						if (r) {
+								$.post('deleteImageFolder', {
+									'imageFolder.imageFolderId' : $('#imageFolder_').combobox('getValue')
+								}, function(result) {
+									if (result.success) {
+										$('#dg').datagrid('reload'); // reload the user data
+									} else {
+										$.messager.show({ // show error message
+											title : '错误',
+											msg : '删除失败，请重新删除!'
+										});
+									}
+								}, 'json');
+						}
+					});
+			}else{
+				$.messager.confirm('警告', "您还没有选中任何相册");
+			}
+		}
+		function destroyImage() {
+			var checkedItems = $('#dg').datagrid('getChecked');
 			var row = $('#dg').datagrid('getSelected');
-			$.extend($.messager.defaults,{
-                ok:"确定",
-                cancel:"取消",
-                modal:true
-            });
+			var items = new Array(); //创建一个数组
+			$.each(checkedItems, function(index, item) {
+				items.push(item.imageId);
+			});
+			
 			if (row) {
 				$.messager.confirm('警告',
-						"您确定要移除: "+row.videoName+" 吗?",
-						function(r) {
-							if (r) {
-								$.post('deleteVideo', {
-									videoId : row.videoId
+					"您确定要删除这 " + items.length + " 数据吗?",
+					function(r) {
+						if (r) {
+							for (index in items) {
+								$.post('deleteImage', {
+									imageId : items[index]
 								}, function(result) {
 									if (result.success) {
 										$('#dg').datagrid('reload'); // reload the user data
@@ -139,7 +260,10 @@
 									}
 								}, 'json');
 							}
-						});
+						}
+					});
+			} else {
+				$.messager.confirm('警告', "您还没有选中对应行");
 			}
 		}
 	</script>

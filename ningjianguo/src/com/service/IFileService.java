@@ -28,7 +28,7 @@ public interface IFileService {
 	 * 获得文件所有信息
 	 * @return Json格式文件信息
 	 */
-	public String getFileAllInfo();
+	public String getFileAllInfo(int pageNo, int pageSize);
 	
 	/**
 	 * 获得文件条目数

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.comm.dao.BaseDaoImpl;
 import com.dao.IVideo;
+import com.entity.Image;
 import com.entity.User;
 import com.entity.Video;
 import com.entity.VideoTag;
@@ -121,8 +122,8 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 	}
 
 	@Override
-	public String getVideoAllInfo() {
-		List<Video> videos = videoDaoImpl.getVideAllInfo();
+	public String getVideoAllInfo(int pageNo, int pageSize) {
+		List<Video> videos = getPaging(pageNo, pageSize, null);
 		Map<String, Object> maps = null;
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		JSONObject jobj = null;
@@ -150,11 +151,12 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 		return jobj.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public int getVideoTotalSize() {
-		Query query = getSession().createSQLQuery("select count(*) from video");
-		BigInteger count = (BigInteger) query.list().get(0);
-		return count.intValue();
+		Query query = getSession().createQuery("from Video");
+		List<Image> images = query.list();
+		return images.size();
 	}
 
 	@Override
@@ -163,9 +165,9 @@ public class VideoServiceImpl extends BaseDaoImpl<Video> implements
 		Map<String, Object> statu2 = new HashMap<String, Object>();
 		List<Map<String, Object>> statuList = new ArrayList<Map<String, Object>>();
 		statu1.put("statuName", FILE_STATU_RELEASE);
-		statu1.put("statuId", 1);
+		statu1.put("statuId", 2);
 		statu2.put("statuName", FILE_STATU_NORELEASE);
-		statu2.put("statuId", 2);
+		statu2.put("statuId", 1);
 		statuList.add(statu1);
 		statuList.add(statu2);
 		return JSONArray.fromObject(statuList).toString();

@@ -33,6 +33,12 @@ public interface IImage {
 	 * 删除相片信息
 	 */
 	public int deleteImage(int imageId);
+	
+	/**
+	 * 更新相册
+	 */
+	public int updateImageFolder(Image image);
+	
 }
 
 

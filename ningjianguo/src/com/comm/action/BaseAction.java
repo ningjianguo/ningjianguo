@@ -33,12 +33,16 @@ public class BaseAction<T> extends ActionSupport implements ModelDriven<T> {
 	@Resource
 	protected IImageService imageServiceImpl;
 	
-	
 	protected T model;
 	protected HttpServletRequest request;
 	protected Map session;
 	protected Map application;
 	protected HttpServletResponse response;
+	
+	
+	protected String page;
+	protected String rows;
+	
 	public BaseAction() {
 		this.session = ActionContext.getContext().getSession();
 		this.request = ServletActionContext.getRequest();
@@ -68,4 +72,17 @@ public class BaseAction<T> extends ActionSupport implements ModelDriven<T> {
 	public T getModel() {
 		return this.model;
 	}
+	/**
+	 * @param page the page to set
+	 */
+	public void setPage(String page) {
+		this.page = page;
+	}
+	/**
+	 * @param rows the rows to set
+	 */
+	public void setRows(String rows) {
+		this.rows = rows;
+	}
+	
 }

@@ -4,8 +4,8 @@
 	<package name="fileBean" namespace="/" extends="default">
 		<!-- 博客视频 -->
 		<action name="*File" class="fileAction" method="{1}File">
-			<result name="forwardUpload">/WEB-INF/admin/uploadFile.jsp</result>
-			<result name="forwardManage">/WEB-INF/admin/manageFile.jsp</result>
+			<result name="upload">/WEB-INF/admin/uploadFile.jsp</result>
+			<result name="manage">/WEB-INF/admin/manageFile.jsp</result>
 			<!-- 配置文件上传拦截器 -->
 			<interceptor-ref name="fileUpload">
 				<!-- 文件过滤 -->

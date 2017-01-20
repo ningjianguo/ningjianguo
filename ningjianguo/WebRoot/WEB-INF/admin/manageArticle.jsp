@@ -62,17 +62,17 @@
 			<div style="margin-bottom:10px">
 				<input name="articleTag.articleTagName" class="easyui-combobox" id="articleTag"
 					required="true" editable="false" label="文章标签:" style="width:100%"
-					data-options="valueField:'tagId',textField:'tagName',url:'loadTagArticle'">
+					data-options="valueField:'tagId',textField:'tagName',url:'loadTagArticle',panelHeight:'auto'">
 			</div>
 			<div style="margin-bottom:10px">
 				<input name="articleType" class="easyui-combobox" required="true"
 					editable="false" id="articleType" label="文章类型:" style="width:100%"
-					data-options="textField:'typeName',valueField:'typeId',url:'loadTypeArticle'">
+					data-options="textField:'typeName',valueField:'typeId',url:'loadTypeArticle',panelHeight:'auto'">
 			</div>
 			<div style="margin-bottom:10px">
 				<input name="articleStatu" class="easyui-combobox" required="true"
 					editable="false" id="articleStatu" label="发布状态:" style="width:100%"
-					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuArticle'">
+					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuArticle',panelHeight:'auto'">
 			</div>
 		</form>
 	</div>
@@ -107,10 +107,10 @@
 			}
 			switch ($('#articleStatu').combobox('getText')) {
 			case "已发布":
-				$('#articleStatu').val(1);
+				$('#articleStatu').val(2);
 				break;
 			case "未发布":
-				$('#articleStatu').val(2);
+				$('#articleStatu').val(1);
 				break;
 			}
 			$.ajax({

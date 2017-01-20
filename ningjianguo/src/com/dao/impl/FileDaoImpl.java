@@ -2,7 +2,6 @@ package com.dao.impl;
 
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -22,11 +21,9 @@ import com.entity.File;
 public class FileDaoImpl extends BaseDaoImpl<File> implements IFile {
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<File> getFileAllInfo() {
-		Query query = getSession().createQuery("from File");
-		return query.list();
+		return queryAllInfo();
 	}
 	
 	@Override

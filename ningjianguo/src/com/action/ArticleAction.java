@@ -1,7 +1,5 @@
 package com.action;
 
-import java.io.IOException;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -21,9 +19,8 @@ import com.entity.Article;
 public class ArticleAction extends BaseAction<Article>{
 	
 	private static final long serialVersionUID = 1L;
-	String page;
-	String rows;
-	String articleString;
+	private String page;
+	private String rows;
 	/**
 	 * 跳转到博文编辑页面
 	 */
@@ -54,32 +51,28 @@ public class ArticleAction extends BaseAction<Article>{
 	 * 加载文章信息
 	 */
 	public String loadArticle(){
-		articleString = articleServiceImpl.getAllArticle(Integer.parseInt(page), Integer.parseInt(rows));
-		printJsonStringToBrowser(articleString);
+		printJsonStringToBrowser(articleServiceImpl.getAllArticle(Integer.parseInt(page), Integer.parseInt(rows)));
 		return null;
 	}
 	/**
 	 * 加载标签信息 
 	 */
 	public String loadTagArticle(){
-		articleString = articleServiceImpl.getAllTag();
-		printJsonStringToBrowser(articleString);
+		printJsonStringToBrowser(articleServiceImpl.getAllTag());
 		return null;
 	}
 	/**
 	 * 加载类型信息 
 	 */
 	public String loadTypeArticle(){
-		articleString = articleServiceImpl.getAllTagType();
-		printJsonStringToBrowser(articleString);
+		printJsonStringToBrowser(articleServiceImpl.getAllTagType());
 		return null;
 	}
 	/**
 	 * 加载状态信息 
 	 */
 	public String loadStatuArticle(){
-		articleString = articleServiceImpl.getAllTagStatu();
-		printJsonStringToBrowser(articleString);
+		printJsonStringToBrowser(articleServiceImpl.getAllTagStatu());
 		return null;
 	}
 	
@@ -87,12 +80,7 @@ public class ArticleAction extends BaseAction<Article>{
 	 * 更新文章
 	 */
 	public String updateArticle(){
-		articleString = articleServiceImpl.updateArticle(getModel());
-		try {
-			response.getWriter().write(articleString);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(articleServiceImpl.updateArticle(getModel()));
 		return null;
 	}
 
@@ -100,13 +88,7 @@ public class ArticleAction extends BaseAction<Article>{
 	 * 删除文章
 	 */
 	public String deleteArticle(){
-		articleString = articleServiceImpl.deleteArticle(getModel());
-		try {
-			response.getWriter().write(articleString);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(articleServiceImpl.deleteArticle(getModel()));
 		return null;
 	}
 	

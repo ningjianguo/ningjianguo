@@ -60,7 +60,7 @@
 			<div style="margin-bottom:10px">
 				<input name="fileStatu" class="easyui-combobox" required="true"
 					editable="false" id="fileStatu" label="发布状态:" style="width:100%"
-					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuFile'">
+					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuFile',panelHeight:'auto'">
 			</div>
 		</form>
 	</div>

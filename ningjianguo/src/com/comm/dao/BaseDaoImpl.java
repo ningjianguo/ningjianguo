@@ -27,7 +27,14 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 
 		this.domainClass = ((Class) type.getActualTypeArguments()[0]);
 	}
-
+	/**
+	 * 查询实体对应的数据库保存信息
+	 * @return 数据库所有信息
+	 */
+	@SuppressWarnings("unchecked")
+	public List<T> queryAllInfo(){
+		return getSession().createQuery("from "+domainClass.getSimpleName()).list();
+	}
 	public void update(T t) {
 		getSession().update(t);
 	}

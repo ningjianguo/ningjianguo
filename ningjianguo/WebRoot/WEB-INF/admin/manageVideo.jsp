@@ -62,18 +62,18 @@
 			<div style="margin-bottom:10px">
 				<input name="videoTag.videoTagName" class="easyui-combobox" id="videoTag"
 					required="true" editable="false" label="视频标签:" style="width:100%"
-					data-options="valueField:'tagId',textField:'tagName',url:'loadTagVideo'">
+					data-options="valueField:'tagId',textField:'tagName',url:'loadTagVideo',panelHeight:'auto'">
 			</div>
 			<div style="margin-bottom:10px">
 				<input name="videoStatu" class="easyui-combobox" required="true"
 					editable="false" id="videoStatu" label="发布状态:" style="width:100%"
-					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuVideo'">
+					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuVideo',panelHeight:'auto'">
 			</div>
 		</form>
 	</div>
 	<div id="dlg-buttons">
 		<a href="javascript:void(0)" class="easyui-linkbutton c6"
-			iconCls="icon-ok" onclick="saveArticle()" style="width:90px">保存</a> <a
+			iconCls="icon-ok" onclick="saveVideo()" style="width:90px">保存</a> <a
 			href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')"
 			style="width:90px">取消</a>
@@ -88,7 +88,7 @@
 				$('#fm').form('load', row);
 			}
 		}
-		function saveArticle() {
+		function saveVideo() {
 			switch ($('#videoStatu').combobox('getText')) {
 			case "未发布":
 				$('#videoStatu').val(1);

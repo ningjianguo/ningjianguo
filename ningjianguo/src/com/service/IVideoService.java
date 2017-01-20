@@ -57,7 +57,7 @@ public interface IVideoService {
 	 * 获得视频所有信息
 	 * @return Json格式视频信息
 	 */
-	public String getVideoAllInfo();
+	public String getVideoAllInfo(int pageNo, int pageSize);
 	
 	/**
 	 * 获得视频条目数

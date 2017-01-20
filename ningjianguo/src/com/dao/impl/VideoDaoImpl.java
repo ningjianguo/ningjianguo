@@ -48,11 +48,9 @@ public class VideoDaoImpl extends BaseDaoImpl<Video> implements IVideo {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Video> getVideAllInfo() {
-		Query query = getSession().createQuery("from Video");
-		return query.list();
+		return queryAllInfo();
 	}
 	
 	@Override

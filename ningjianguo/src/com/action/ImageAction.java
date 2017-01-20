@@ -2,7 +2,6 @@ package com.action;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.context.annotation.Scope;
@@ -26,6 +25,7 @@ import com.util.FilePathUtil;
 public class ImageAction extends BaseAction<Image> {
 
 	private static final long serialVersionUID = 1L;
+
 	private int imagePageNo;
 	private int imageFolderId;
 	private File[] images;
@@ -39,65 +39,80 @@ public class ImageAction extends BaseAction<Image> {
 		request.setAttribute("tags", imageServiceImpl.getAllImageFolderName());
 		return "upload";
 	}
+
 	/**
 	 * 查看相册
 	 */
-	public String lookFolderforImage(){
+	public String lookFolderforImage() {
 		request.setAttribute("tags", imageServiceImpl.getAllImageFolderName());
 		return "lookImageFolder";
 	}
+
 	/**
 	 * 查看相片
 	 */
-	public String lookImage(){
+	public String lookImage() {
 		ImagePage iPage = new ImagePage();
 		iPage.setFolderId(imageFolderId);
 		iPage.setPageNo(imagePageNo);
-		
+
 		ImagePage imagePage = imageServiceImpl.imageCount(imageFolderId);
 		imagePage.setFolderId(imageFolderId);
 		imagePage.setPageNo(imagePageNo);
-		List<Image> images = imageServiceImpl.getImageInfo(iPage);
-		for (Image image : images) {
-			System.out.println(image.getImageName());
-		}
-		request.setAttribute("tags",imageServiceImpl.getImageInfo(iPage));//1\2
-		request.setAttribute("iPage",imagePage);
+		request.setAttribute("tags", imageServiceImpl.getImageInfo(iPage));// 1\2
+		request.setAttribute("iPage", imagePage);
 		return "lookImage";
 	}
+
 	/**
 	 * 前往查看相片页面
 	 */
-	public String toLookImage(){
+	public String toLookImage() {
 		int folderId = getModel().getImageFolder().getImageFolderId();
-		
-		//打开页面默认访问第一页数据
+
+		// 打开页面默认访问第一页数据
 		ImagePage page = new ImagePage();
 		page.setFolderId(folderId);
 		page.setPageNo(1);
-		
+
+		request.setAttribute("tags", imageServiceImpl.getImageInfo(page));
 		ImagePage imagePage = imageServiceImpl.imageCount(folderId);
 		imagePage.setFolderId(folderId);
-		request.setAttribute("tags",imageServiceImpl.getImageInfo(page));
-		request.setAttribute("iPage",imagePage);
+		request.setAttribute("iPage", imagePage);
 		return "lookImage";
 	}
+
 	/**
-	 * 相片上传e
+	 * 前往照片管理页面
+	 * 
+	 * @return
 	 */
-	public String uploadImage(){
-		for(int i = 0; i < images.length; i++){
+	public String forwardManageImage() {
+		return "manage";
+	}
+
+	/**
+	 * 加载照片信息
+	 */
+	public String loadImage() {
+		printJsonStringToBrowser(
+				imageServiceImpl.getImageAllInfo(Integer.parseInt(page), Integer.parseInt(rows), getModel().getImageFolder().getImageFolderId()));
+		return null;
+	}
+
+	/**
+	 * 相片上传
+	 */
+	public String uploadImage() {
+		for (int i = 0; i < images.length; i++) {
 			Image image = getModel();
 			String imageName = imagesFileName[i].split("\\.")[0];
-			String imageContentType = "."+imagesContentType[i].split("/")[1];
+			String imageContentType = "." + imagesContentType[i].split("/")[1];
 			image.setImageName(imageName);
-			if(imageServiceImpl.uploadImage(image,imageContentType)){
+			if (imageServiceImpl.uploadImage(image, imageContentType)) {
 				try {
-					FileUtils.copyFile(images[i],
-							new File(FilePathUtil.getValue("uploadFilePath") + "/"
-									+ imageName + "_blog_"
-									+ imageServiceImpl.getMaxImageId() + imageContentType
-									));
+					FileUtils.copyFile(images[i], new File(FilePathUtil.getValue("uploadFilePath") + "/"
+							+ imageServiceImpl.getMaxImageId() + imageContentType));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -107,36 +122,87 @@ public class ImageAction extends BaseAction<Image> {
 	}
 
 	/**
-	 * @param images the images to set
+	 * 修改照片信息
+	 */
+	public String updateImage() {
+		printJsonStringToBrowser(imageServiceImpl.updateImage(getModel()));
+		return null;
+	}
+
+	/**
+	 * 删除照片信息
+	 */
+	public String deleteImage() {
+		printJsonStringToBrowser(imageServiceImpl.deleteImage(getModel()));
+		return null;
+	}
+	/**
+	 * 修改相册信息
+	 */
+	public String updateImageFolder(){
+		printJsonStringToBrowser(imageServiceImpl.updateImageFolder(getModel()));
+		return null;
+	}
+	/**
+	 * 删除相册
+	 */
+	public String deleteImageFolder(){
+		printJsonStringToBrowser(imageServiceImpl.deleteImageFolder(getModel()));
+		return null;
+	}
+	/**
+	 * 加载相册发布状态
+	 */
+	public String loadStatuImageFolder() {
+		printJsonStringToBrowser(imageServiceImpl.getImageFolderStatu());
+		return null;
+	}
+
+	/**
+	 * 加载相册名
+	 */
+	public String loadImageFolder() {
+		printJsonStringToBrowser(imageServiceImpl.getAllImageFolder());
+		return null;
+	}
+
+	/**
+	 * @param images
+	 *            the images to set
 	 */
 	public void setImages(File[] images) {
 		this.images = images;
 	}
 
 	/**
-	 * @param imagesContentType the imagesContentType to set
+	 * @param imagesContentType
+	 *            the imagesContentType to set
 	 */
 	public void setImagesContentType(String[] imagesContentType) {
 		this.imagesContentType = imagesContentType;
 	}
 
 	/**
-	 * @param imagesFileName the imagesFileName to set
+	 * @param imagesFileName
+	 *            the imagesFileName to set
 	 */
 	public void setImagesFileName(String[] imagesFileName) {
 		this.imagesFileName = imagesFileName;
 	}
+
 	/**
-	 * @param imagePageNo the imagePageNo to set
+	 * @param imagePageNo
+	 *            the imagePageNo to set
 	 */
 	public void setImagePageNo(int imagePageNo) {
 		this.imagePageNo = imagePageNo;
 	}
+
 	/**
-	 * @param imageFolderId the imageFolderId to set
+	 * @param imageFolderId
+	 *            the imageFolderId to set
 	 */
 	public void setImageFolderId(int imageFolderId) {
 		this.imageFolderId = imageFolderId;
 	}
-	
 }

@@ -36,7 +36,7 @@ public class VideoAction extends BaseAction<Video> {
 	 */
 	public String forwardUploadVideo() {
 		request.setAttribute("tags", videoServiceImpl.getAllVideoTag());
-		return "forwardUpload";
+		return "upload";
 	}
 
 	/**
@@ -45,20 +45,14 @@ public class VideoAction extends BaseAction<Video> {
 	 * @return
 	 */
 	public String forwardManageVideo() {
-		return "forwardManage";
+		return "manage";
 	}
 
 	/**
 	 * 加载视频信息
 	 */
 	public String loadVideo() {
-		response.setCharacterEncoding("UTF-8");
-		try {
-			response.getWriter().write(videoServiceImpl.getVideoAllInfo());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(videoServiceImpl.getVideoAllInfo(Integer.parseInt(page), Integer.parseInt(rows)));
 		return null;
 	}
 
@@ -128,12 +122,7 @@ public class VideoAction extends BaseAction<Video> {
 	 * 修改视频信息
 	 */
 	public String updateVideo() {
-		try {
-			response.getWriter()
-					.write(videoServiceImpl.updateVideo(getModel()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(videoServiceImpl.updateVideo(getModel()));
 		return null;
 	}
 
@@ -141,12 +130,7 @@ public class VideoAction extends BaseAction<Video> {
 	 * 删除视频信息
 	 */
 	public String deleteVideo() {
-		try {
-			response.getWriter()
-					.write(videoServiceImpl.deleteVideo(getModel()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		printJsonStringToBrowser(videoServiceImpl.deleteVideo(getModel()));
 		return null;
 	}
 
