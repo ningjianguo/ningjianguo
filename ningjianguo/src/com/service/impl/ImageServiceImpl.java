@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -53,7 +52,7 @@ public class ImageServiceImpl extends BaseDaoImpl<Image> implements IImageServic
 		v.setImageFileName((newImageId + 1) + imageContentType);
 		try {
 			save(v);
-			if (newImageId == 0) {
+			if (newImageId == 0 || getMaxImageId() != newImageId + 1) {
 				getSession().createSQLQuery("update image set image_file_name=:filename where image_file_name=:name")
 						.setString("filename", getMaxImageId() + imageContentType)
 						.setString("name", (newImageId + 1) + imageContentType).executeUpdate();
@@ -202,20 +201,19 @@ public class ImageServiceImpl extends BaseDaoImpl<Image> implements IImageServic
 	@SuppressWarnings("unchecked")
 	@Override
 	public String deleteImageFolder(Image image) {
-		String returnObj = null;
+		JSONObject jobj = new JSONObject();
 		Session session = getSession();
 		try {
-			ImageFolder imageFolder = (ImageFolder) session.createQuery("from ImageFolder where imageFolderId=?")
-					.setInteger(0, image.getImageFolder().getImageFolderId()).uniqueResult();
-			Set<Image> images = imageFolder.getImages();
-			session.flush();
+			List<Image> images = session.createQuery("from Image where imageFolder.imageFolderId=?")
+					.setInteger(0, image.getImageFolder().getImageFolderId()).list();
 			for (Image img : images) {
-				Query query = session.createQuery("from Image where imageId=:id").setInteger("id", img.getImageId());
-				Image deleteImage = (Image) query.uniqueResult();
+				Image deleteImage = (Image) session.createQuery("from Image where imageId=:id")
+						.setInteger("id", img.getImageId()).uniqueResult();
 				File desFile = new File(FilePathUtil.getValue("uploadFilePath") + "/" + deleteImage.getImageFileName());
 				if (desFile.exists()) {
 					if (desFile.delete()) {
-						imageDaoImpl.deleteImage(deleteImage.getImageId());
+						session.delete(deleteImage);
+						session.beginTransaction().commit();
 					}
 				}
 			}
@@ -225,7 +223,27 @@ public class ImageServiceImpl extends BaseDaoImpl<Image> implements IImageServic
 		ImageFolder iFolder = new ImageFolder();
 		iFolder.setImageFolderId(image.getImageFolder().getImageFolderId());
 		session.delete(iFolder);
-		return returnObj;
+		session.beginTransaction().commit();
+		jobj = jobj.accumulate("success", "success");
+		return jobj.toString();
+	}
+
+	@Override
+	public String validataImageFolder(String folderName) {
+		ImageFolder imageFolder = (ImageFolder) getSession().createQuery("from ImageFolder where imageFolderName=?")
+				.setString(0, folderName).uniqueResult();
+		int flag = imageFolder == null ? 0 : 1;
+		return JSONArray.fromObject(flag).toString();
+	}
+
+	@Override
+	public String addImageFolder(ImageFolder imageFolder) {
+		Query query = getSession().createSQLQuery("insert into image_folder(image_folder_name,image_folder_statu,image_folder_description) values(?,?,?)");
+		query.setString(0, imageFolder.getImageFolderName())
+			 .setInteger(1, imageFolder.getImageFolderStatu())
+			 .setString(2, imageFolder.getImageFolderDescription())
+			 .executeUpdate();
+		return JSONArray.fromObject(1).toString();
 	}
 
 }

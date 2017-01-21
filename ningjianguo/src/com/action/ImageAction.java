@@ -165,7 +165,20 @@ public class ImageAction extends BaseAction<Image> {
 		printJsonStringToBrowser(imageServiceImpl.getAllImageFolder());
 		return null;
 	}
-
+	/**
+	 * 验证相册名
+	 */
+	public String validataImageFolder(){
+		printJsonStringToBrowser(imageServiceImpl.validataImageFolder(getModel().getImageFolder().getImageFolderName()));
+		return null;
+	}
+	/**
+	 * 增加相册
+	 */
+	public String addImageFolder(){
+		printJsonStringToBrowser(imageServiceImpl.addImageFolder(getModel().getImageFolder()));
+		return null;
+	}
 	/**
 	 * @param images
 	 *            the images to set

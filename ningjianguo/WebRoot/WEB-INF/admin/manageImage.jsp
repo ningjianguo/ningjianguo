@@ -112,25 +112,50 @@
 			</div>
 		</form>
 	</div>
-	<div id="dlg_imageFolder" class="easyui-dialog" style="width:400px"
-		closed="true" buttons="#dlg-buttons_folder" data-options="modal:true">
+	<div id="dlg_imageFolder_edite" class="easyui-dialog"
+		style="width:400px" closed="true" buttons="#dlg-buttons_folder_edite"
+		data-options="modal:true">
 		<form id="imageFolderForm" method="post" novalidate
 			style="margin:0;padding:20px 50px">
 			<div style="margin-bottom:10px">
 				<input name="imageFolder.imageFolderName" class="easyui-combobox"
-					id="imageFolder_" required="true" editable="false" label="相册名称:"
-					style="width:100%"
+					id="imageFolder_edite" required="true" editable="false"
+					label="相册名称:" style="width:100%"
 					data-options="valueField:'folderId',textField:'folderName',url:'loadImageFolder',panelHeight:'auto'">
 			</div>
 			<div style="margin-bottom:10px">
 				<input name="imageFolder.imageFolderStatu" class="easyui-combobox"
-					required="true" editable="false" id="imageStatu_" label="发布状态:"
-					style="width:100%"
+					required="true" editable="false" id="imageStatu_edite"
+					label="发布状态:" style="width:100%"
 					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuImageFolder',panelHeight:'auto'">
 			</div>
 			<div style="margin-bottom:10px">
 				<input class="easyui-validatebox easyui-textbox" name="message"
 					label="相册描述:" required="true" maxlength="80" id="arr_content"
+					validtype="length[0,80]" data-options="multiline:true"
+					style="width: 100%;height: 110px;" invalidMessage="最大长度80位"></input>
+			</div>
+		</form>
+	</div>
+	<div id="dlg_imageFolder_add" class="easyui-dialog" style="width:400px"
+		closed="true" buttons="#dlg-buttons_folder_add"
+		data-options="modal:true">
+		<form id="imageFolderForm" method="post" novalidate
+			style="margin:0;padding:20px 50px">
+			<div style="margin-bottom:10px">
+				<input name="imageFolder.imageFolderName" class="easyui-textbox"
+					id="imageFolder_add" required="true" label="相册名称:"
+					style="width:100%">
+			</div>
+			<div style="margin-bottom:10px">
+				<input name="imageFolder.imageFolderStatu" class="easyui-combobox"
+					required="true" editable="false" id="imageStatu_add" label="发布状态:"
+					style="width:100%"
+					data-options="valueField:'statuId',textField:'statuName',url:'loadStatuImageFolder',panelHeight:'auto'">
+			</div>
+			<div style="margin-bottom:10px">
+				<input class="easyui-validatebox easyui-textbox" name="message"
+					label="相册描述:" required="true" maxlength="80" id="folder_content"
 					validtype="length[0,80]" data-options="multiline:true"
 					style="width: 100%;height: 110px;" invalidMessage="最大长度80位"></input>
 			</div>
@@ -143,27 +168,37 @@
 			iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')"
 			style="width:90px">取消</a>
 	</div>
-	<div id="dlg-buttons_folder">
-	
-		<a href="javascript:void(0)"
-			class="easyui-linkbutton" iconCls="icon-rubbish" onclick="destroyImageFolder()"
-			style="width:90px">删除相册</a>
+	<div id="dlg-buttons_folder_edite">
+
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add_" onclick="addImageFolder()" style="width:90px">新增相册</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-rubbish" onclick="destroyImageFolder()"
+			style="width:90px">删除相册</a> <a href="javascript:void(0)"
+			class="easyui-linkbutton c6" iconCls="icon-ok"
+			onclick="saveImageFolder()" style="width:60px">保存</a> <a
+			href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-cancel"
+			onclick="javascript:$('#dlg_imageFolder_edite').dialog('close')"
+			style="width:60px">取消</a>
+	</div>
+	<div id="dlg-buttons_folder_add">
 		<a href="javascript:void(0)" class="easyui-linkbutton c6"
-			iconCls="icon-ok" onclick="saveImageFolder()" style="width:90px">保存</a>
+			iconCls="icon-ok" onclick="addImageFolderImpl()" style="width:60px">保存</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-cancel"
-			onclick="javascript:$('#dlg_imageFolder').dialog('close')"
-			style="width:90px">取消</a> 
+			onclick="javascript:$('#dlg_imageFolder_add').dialog('close')"
+			style="width:60px">取消</a>
 	</div>
 	<script type="text/javascript">
-		$(function(){
+		var url;
+		$(function() {
 			$.extend($.messager.defaults, {
 				ok : "确定",
 				cancel : "取消",
 				modal : true
 			});
 		})
-		var url;
 		function editImage() {
 			var row = $('#dg').datagrid('getSelected');
 			if (row) {
@@ -173,7 +208,7 @@
 			}
 		}
 		function editImageFolder() {
-			$('#dlg_imageFolder').dialog('open').dialog('center').dialog('setTitle',
+			$('#dlg_imageFolder_edite').dialog('open').dialog('center').dialog('setTitle',
 				'编辑相册信息');
 		}
 		function saveImage() {
@@ -192,6 +227,44 @@
 				}
 			})
 		}
+		function addImageFolder() {
+			$('#dlg_imageFolder_edite').dialog('close');
+			$('#dlg_imageFolder_add').dialog('open').dialog('center').dialog('setTitle',
+				'新增相册');
+		}
+		function addImageFolderImpl() {
+			$.ajax({
+				type : "post",
+				url : "validataImageFolder",
+				data : {
+					"imageFolder.imageFolderName" : $("#imageFolder_add").val()
+				},
+				dataType : "json",
+				cache : false,
+				success : function(data) {
+					if (data == 1) {
+						$.messager.confirm('警告', "该相册名已被占用,请重新输入");
+					} else {
+						$.ajax({
+							type : "post",
+							url : "addImageFolder",
+							data : {
+								"imageFolder.imageFolderName" : $("#imageFolder_add").val(),
+								"imageFolder.imageFolderStatu":	$('#imageStatu_add').combobox('getValue'),
+								"imageFolder.imageFolderDescription":$('#folder_content').val()
+							},
+							dataType : "json",
+							cache : false,
+							success : function(data) {
+								$('#dlg_imageFolder_add').dialog('close'); // close the dialog
+								$('#dg').datagrid('reload'); // reload the user data
+							}
+						})
+					}
+				}
+			})
+		}
+	
 		function saveImageFolder() {
 			$.ajax({
 				type : "post",
@@ -199,37 +272,38 @@
 				dataType : "json",
 				cache : false,
 				data : {
-					"imageFolder.imageFolderStatu" : $('#imageStatu_').combobox('getValue'),
-					"imageFolder.imageFolderId" : $('#imageFolder_').combobox('getValue'),
+					"imageFolder.imageFolderStatu" : $('#imageStatu_edite').combobox('getValue'),
+					"imageFolder.imageFolderId" : $('#imageFolder_edite').combobox('getValue'),
 					"imageFolder.imageFolderDescription" : $('#arr_content').val()
 				},
 				success : function(data) {
-					$('#dlg_imageFolder').dialog('close'); // close the dialog
+					$('#dlg_imageFolder_edite').dialog('close'); // close the dialog
 					$('#dg').datagrid('reload'); // reload the user data
 				}
 			});
 		}
-		function destroyImageFolder(){
-			if($('#imageFolder_').combobox('getValue')!=""){
+		function destroyImageFolder() {
+			if ($('#imageFolder_edite').combobox('getValue') != "") {
 				$.messager.confirm('警告',
-					"您确定要删除 " + $('#imageFolder_').combobox('getText') + " 相册吗?",
+					"您确定要删除 " + $('#imageFolder_edite').combobox('getText') + " 相册吗?",
 					function(r) {
 						if (r) {
-								$.post('deleteImageFolder', {
-									'imageFolder.imageFolderId' : $('#imageFolder_').combobox('getValue')
-								}, function(result) {
-									if (result.success) {
-										$('#dg').datagrid('reload'); // reload the user data
-									} else {
-										$.messager.show({ // show error message
-											title : '错误',
-											msg : '删除失败，请重新删除!'
-										});
-									}
-								}, 'json');
+							$.post('deleteImageFolder', {
+								'imageFolder.imageFolderId' : $('#imageFolder_edite').combobox('getValue')
+							}, function(result) {
+								if (result.success) {
+									$('#dlg_imageFolder_edite').dialog('close'); // close the dialog
+									$('#dg').datagrid('reload'); // reload the user data
+								} else {
+									$.messager.show({ // show error message
+										title : '错误',
+										msg : '删除失败，请重新删除!'
+									});
+								}
+							}, 'json');
 						}
 					});
-			}else{
+			} else {
 				$.messager.confirm('警告', "您还没有选中任何相册");
 			}
 		}
@@ -240,7 +314,7 @@
 			$.each(checkedItems, function(index, item) {
 				items.push(item.imageId);
 			});
-			
+	
 			if (row) {
 				$.messager.confirm('警告',
 					"您确定要删除这 " + items.length + " 数据吗?",

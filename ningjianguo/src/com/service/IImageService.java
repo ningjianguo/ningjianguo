@@ -90,7 +90,7 @@ public interface IImageService {
 	public String getAllImageFolder();
 	
 	/**
-	 * 更新相册信息
+	 * 更新相册
 	 */
 	public String updateImageFolder(Image image);
 	
@@ -98,5 +98,14 @@ public interface IImageService {
 	 * 删除相册
 	 */
 	public String deleteImageFolder(Image image);
+	
+	/**
+	 * 新增相册
+	 */
+	public String addImageFolder(ImageFolder image);
+	/**
+	 * 验证相册名
+	 */
+	public String validataImageFolder(String folderName);
 }
 	
